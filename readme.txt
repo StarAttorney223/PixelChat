@@ -1,1 +1,1 @@
-hi
+this is a realtime private chatroom creator with just a room code in the Pixel retro style. No history is saved.  
