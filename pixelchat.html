@@ -33,12 +33,7 @@
     overflow:hidden;
   }
 
-  /* scanlines */
-  body::after {
-    content:''; position:fixed; inset:0;
-    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.13) 2px,rgba(0,0,0,0.13) 4px);
-    pointer-events:none; z-index:9999;
-  }
+  /* scanlines: OFF */
   body::before {
     content:''; position:fixed; inset:0;
     background:
@@ -233,9 +228,9 @@
 
   .bubble { background:var(--panel); border:3px solid var(--border); box-shadow:3px 3px 0 rgba(0,0,0,.4); padding:11px 16px; font-size:24px; line-height:1.45; word-break:break-word; max-width:min(620px,90%); display:inline-block; }
 
-  /* media bubble */
+  /* media bubble — crisp, above scanline overlay */
   .bubble img, .bubble video {
-    display:block; max-width:100%; max-height:320px;
+    display:block; max-width:100%; max-height:340px;
     border:2px solid var(--border); margin-top:4px;
     image-rendering:auto;
   }
