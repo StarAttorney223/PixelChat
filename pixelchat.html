@@ -128,10 +128,12 @@
   }
   @keyframes hp-fill { to{width:100%} }
 
-  /*
-     CHATROOM
   
-  #chatroom { display:none; height:100vh; flex-direction:column; position:relative; z-index:1; }
+     /* CHATROOM */
+
+      #chatroom { display:none; height:100vh; flex-direction:column; position:relative; z-index:1; }
+  
+ 
 
   /* HEADER */
   .chat-header {
@@ -472,7 +474,8 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────
-const WS_URL = "ws://localhost:3001";
+// const WS_URL = "ws://localhost:3001";
+const WS_URL = "wss://pixelchat-535b.onrender.com";
 // ─────────────────────────────────────────────
 
 const COLORS    = ["#00e5ff","#ff00aa","#ffe600","#00ff88","#ff3355","#cc88ff","#ff8800","#88ffee"];
