@@ -128,12 +128,10 @@
   }
   @keyframes hp-fill { to{width:100%} }
 
-  
-     /* CHATROOM */
-
-      #chatroom { display:none; height:100vh; flex-direction:column; position:relative; z-index:1; }
-  
- 
+  /* ══════════════════════════════════════
+     CHATROOM
+  ══════════════════════════════════════ */
+  #chatroom { display:none; height:100vh; flex-direction:column; position:relative; z-index:1; }
 
   /* HEADER */
   .chat-header {
@@ -314,13 +312,18 @@
   .toast { position:fixed; bottom:20px; right:20px; background:var(--bg2); border:3px solid var(--green); box-shadow:4px 4px 0 rgba(0,255,136,.2); color:var(--green); font-size:16px; padding:10px 16px; letter-spacing:2px; opacity:0; transform:translateY(8px); transition:all .15s steps(3); z-index:9998; pointer-events:none; }
   .toast.show { opacity:1; transform:translateY(0); }
 
+
+  /* share link btn tooltip feel */
+  .share-link-btn { font-size:17px; margin-left:2px; }
+  .share-link-btn:hover { color:var(--yellow); }
+
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:var(--bg); }
   ::-webkit-scrollbar-thumb { background:var(--border); }
 
-  /* 
+  /* ══════════════════════════════════════
      RESPONSIVE
-  */
+  ══════════════════════════════════════ */
   @media (max-width:700px) {
     /* Lobby */
     .lobby-card { padding:32px 22px; }
@@ -400,7 +403,7 @@
     </div>
 
     <div class="pixel-title">PIXELCHAT</div>
-    <div class="pixel-sub">&gt; MULTIPLAYER v1.3 <span class="blink">_</span></div>
+    <div class="pixel-sub">&gt; MULTIPLAYER v3.0 <span class="blink">_</span></div>
 
     <div class="field-group">
       <label class="field-label">▶ PLAYER NAME</label>
@@ -426,7 +429,7 @@
   <div class="chat-header">
     <div class="header-left">
       <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
-      <div class="room-badge">▣ <span id="roomCodeDisplay"></span><button class="copy-btn" onclick="copyRoomCode()">⎘</button></div>
+      <div class="room-badge">▣ <span id="roomCodeDisplay"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button><button class="copy-btn share-link-btn" onclick="copyShareLink()" title="Copy invite link">🔗</button></div>
       <div class="online-count"><div class="px-dot"></div><span id="onlineCount">0</span>&nbsp;ONLINE</div>
       <div class="conn-pill connecting" id="connPill">CONNECTING</div>
       <button class="players-btn" onclick="toggleSidebar()">👾 PLAYERS</button>
@@ -474,8 +477,8 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────
-// const WS_URL = "ws://localhost:3001";
-const WS_URL = "wss://pixelchat-535b.onrender.com";
+// const WS_URL = "ws://localhost:3001";  // local dev
+const WS_URL = "wss://pixelchat-535b.onrender.com"; // deployed
 // ─────────────────────────────────────────────
 
 const COLORS    = ["#00e5ff","#ff00aa","#ffe600","#00ff88","#ff3355","#cc88ff","#ff8800","#88ffee"];
@@ -830,6 +833,34 @@ function fmtTime(ts) {
 function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+// ── SHARE LINK ────────────────────────────────
+// On load: if ?room=CODE is in URL, pre-fill the room code field
+// and generate a share link button after joining
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const roomParam = params.get('room');
+  if (roomParam) {
+    document.getElementById('roomInput').value = roomParam.toUpperCase();
+    // highlight it so user knows it was pre-filled
+    const inp = document.getElementById('roomInput');
+    inp.style.borderColor = 'var(--yellow)';
+    inp.style.boxShadow = 'inset 3px 3px 0 rgba(0,0,0,.4), 0 0 0 2px rgba(255,230,0,.3)';
+  }
+});
+
+function getShareLink() {
+  if (!currentRoom) return null;
+  const base = window.location.origin + window.location.pathname;
+  return base + '?room=' + encodeURIComponent(currentRoom);
+}
+
+function copyShareLink() {
+  const link = getShareLink();
+  if (!link) return;
+  navigator.clipboard.writeText(link).then(() => showToast('>> SHARE LINK COPIED!'));
+}
+
 </script>
 </body>
 </html>
