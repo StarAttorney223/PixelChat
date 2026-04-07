@@ -1,10 +1,12 @@
+
 const http = require("http");
 const { WebSocketServer } = require("ws");
 
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;
+// Max media size: 8 MB (base64 encoded images/video previews)
 const MAX_MEDIA_BYTES = 8 * 1024 * 1024;
 
-const rooms = {};
+const rooms = {}; // rooms[code] = { users:{}, clients:Set, messages:[] }
 
 function colorFor(uid) {
   let h = 0;
@@ -24,10 +26,8 @@ function broadcastRoom(code, payload, exceptWs = null) {
   const room = rooms[code];
   if (!room) return;
   const msg = JSON.stringify(payload);
-  room.clients.forEach(client => {
-    if (client !== exceptWs && client.readyState === 1) {
-      client.send(msg);
-    }
+  room.clients.forEach(ws => {
+    if (ws !== exceptWs && ws.readyState === 1) ws.send(msg);
   });
 }
 
@@ -46,150 +46,126 @@ function pushSys(code, text) {
   broadcastRoom(code, { type: "message", msg: m });
 }
 
-//Health check (important for deployment)
 const server = http.createServer((req, res) => {
-  if (req.url === "/") {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("PixelChat backend is running 🚀");
-  }
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("PixelChat v3 running\n");
 });
 
-const wss = new WebSocketServer({
-  server,
-  maxPayload: MAX_MEDIA_BYTES + 1024
-});
+const wss = new WebSocketServer({ server, maxPayload: MAX_MEDIA_BYTES + 1024 });
 
 wss.on("connection", (ws) => {
-  ws._uid = null;
+  ws._uid  = null;
   ws._room = null;
   ws._name = null;
 
-  // ✅ Keep connection alive (important for hosting)
-  ws.isAlive = true;
-  ws.on("pong", () => (ws.isAlive = true));
-
   ws.on("message", (raw) => {
+    // Guard size
     if (raw.length > MAX_MEDIA_BYTES + 1024) return;
 
     let msg;
-    try {
-      msg = JSON.parse(raw);
-    } catch {
-      return;
-    }
+    try { msg = JSON.parse(raw); } catch { return; }
 
+    // ── JOIN ──
     if (msg.type === "join") {
       const code = (msg.room || "").toUpperCase().trim().slice(0, 20);
       const name = (msg.name || "ANON").toUpperCase().trim().slice(0, 20);
       if (!code || !name) return;
 
-      ws._uid = genUID();
+      ws._uid  = genUID();
       ws._room = code;
       ws._name = name;
 
-      if (!rooms[code]) {
-        rooms[code] = { users: {}, clients: new Set(), messages: [] };
-      }
-
+      if (!rooms[code]) rooms[code] = { users: {}, clients: new Set(), messages: [] };
       const room = rooms[code];
       room.clients.add(ws);
 
       const colorIdx = colorFor(ws._uid);
-      room.users[ws._uid] = {
-        name,
-        uid: ws._uid,
-        colorIdx,
-        joinedAt: Date.now()
-      };
+      room.users[ws._uid] = { name, uid: ws._uid, colorIdx, joinedAt: Date.now() };
 
       send(ws, {
         type: "welcome",
-        uid: ws._uid,
-        colorIdx,
-        name,
-        room: code,
+        uid: ws._uid, colorIdx, name, room: code,
         history: room.messages.slice(-100)
       });
 
       pushUserList(code);
       pushSys(code, `${name} JOINED THE ROOM`);
+      console.log(`[+] ${name}#${ws._uid} → ${code} (${room.clients.size} online)`);
 
-      console.log(`[JOIN] ${name} → ${code}`);
-    }
-
-    else if (msg.type === "chat") {
+    // ── CHAT ──
+    } else if (msg.type === "chat") {
       if (!ws._room || !ws._uid) return;
       const room = rooms[ws._room];
       if (!room) return;
-
       const text = (msg.text || "").trim().slice(0, 2000);
       if (!text) return;
 
       const user = room.users[ws._uid];
-
+      const msgId = ws._uid + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
       const m = {
         type: "chat",
-        uid: ws._uid,
-        name: ws._name,
+        uid: ws._uid, name: ws._name,
         colorIdx: user ? user.colorIdx : 0,
-        text,
-        ts: Date.now()
+        text, ts: Date.now(), msgId,
+        replyTo: msg.replyTo || null
       };
-
       room.messages.push(m);
       if (room.messages.length > 300) room.messages.shift();
-
       broadcastRoom(ws._room, { type: "message", msg: m });
-    }
 
-    else if (msg.type === "media") {
+    // ── EDIT ──
+    } else if (msg.type === "edit") {
+      if (!ws._room || !ws._uid) return;
+      const room = rooms[ws._room];
+      if (!room) return;
+      const { msgId, text } = msg;
+      if (!msgId || !text) return;
+      const cleanText = (text || "").trim().slice(0, 2000);
+      if (!cleanText) return;
+      // Update stored message if author matches
+      const stored = room.messages.find(m => m.msgId === msgId && m.uid === ws._uid);
+      if (stored) stored.text = cleanText;
+      broadcastRoom(ws._room, { type: "edit", msgId, text: cleanText, uid: ws._uid });
+
+    // ── MEDIA ──
+    } else if (msg.type === "media") {
       if (!ws._room || !ws._uid) return;
       const room = rooms[ws._room];
       if (!room) return;
 
       const { dataUrl, mediaType, fileName } = msg;
       if (!dataUrl || !mediaType) return;
-
       if (!mediaType.startsWith("image/") && !mediaType.startsWith("video/")) return;
 
       const user = room.users[ws._uid];
-
+      const mediaMsgId = ws._uid + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
       const m = {
         type: "media",
-        uid: ws._uid,
-        name: ws._name,
+        uid: ws._uid, name: ws._name,
         colorIdx: user ? user.colorIdx : 0,
-        dataUrl,
-        mediaType,
+        dataUrl, mediaType,
         fileName: (fileName || "file").slice(0, 100),
-        ts: Date.now()
+        ts: Date.now(), msgId: mediaMsgId,
+        replyTo: msg.replyTo || null
       };
-
       room.messages.push(m);
       if (room.messages.length > 300) room.messages.shift();
-
       broadcastRoom(ws._room, { type: "message", msg: m });
-    }
 
-    else if (msg.type === "typing") {
+    // ── TYPING ──
+    } else if (msg.type === "typing") {
       if (!ws._room || !ws._uid) return;
-
-      broadcastRoom(
-        ws._room,
-        {
-          type: "typing",
-          uid: ws._uid,
-          name: ws._name,
-          isTyping: !!msg.isTyping
-        },
-        ws
-      );
+      broadcastRoom(ws._room, {
+        type: "typing",
+        uid: ws._uid,
+        name: ws._name,
+        isTyping: !!msg.isTyping
+      }, ws);
     }
   });
 
   ws.on("close", () => {
     if (!ws._room || !ws._uid) return;
-
     const room = rooms[ws._room];
     if (!room) return;
 
@@ -198,26 +174,18 @@ wss.on("connection", (ws) => {
 
     pushSys(ws._room, `${ws._name} LEFT THE ROOM`);
     pushUserList(ws._room);
+    console.log(`[-] ${ws._name}#${ws._uid} ← ${ws._room} (${room.clients.size} online)`);
 
     if (room.clients.size === 0) {
       delete rooms[ws._room];
+      console.log(`[x] Room ${ws._room} closed`);
     }
   });
 
-  ws.on("error", (err) => {
-    console.error("WebSocket error:", err.message);
-  });
+  ws.on("error", () => {});
 });
 
-// Ping clients every 30s (prevents disconnects)
-setInterval(() => {
-  wss.clients.forEach((ws) => {
-    if (!ws.isAlive) return ws.terminate();
-    ws.isAlive = false;
-    ws.ping();
-  });
-}, 30000);
-
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`\n🎮  PixelChat v3 → ws://localhost:${PORT}`);
+  console.log(`    Open pixelchat.html in your browser!\n`);
 });

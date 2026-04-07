@@ -82,7 +82,7 @@
     text-shadow:4px 4px 0 rgba(0,229,255,.3),-1px -1px 0 #001a22;
     margin-bottom:8px; line-height:1.5;
   }
-  .pixel-sub { font-size:clamp(16px,3vw,20px); color:var(--muted); margin-bottom:24px; letter-spacing:2px; }
+  .pixel-sub { font-size:clamp(16px,3vw,20px); color:var(--muted); margin-bottom:36px; letter-spacing:2px; }
 
   .blink { animation:blink 1s step-end infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -141,9 +141,9 @@
     flex-shrink:0; gap:10px; flex-wrap:wrap;
   }
 
-  .header-left { display:flex; align-items:center; gap:28px; flex-wrap:wrap; min-width:0; }
+  .header-left { display:flex; align-items:center; gap:14px; flex-wrap:wrap; min-width:0; }
 
-  .pixel-logo { font-family:'Press Start 2P',monospace;  font-size:clamp(24px,4vw,32px); color:var(--accent); text-shadow:4px 4px 0 rgba(0,229,255,.3); white-space:nowrap; margin-bottom: 10px; }
+  .pixel-logo { font-family:'Press Start 2P',monospace; font-size:clamp(16px,2.5vw,22px); color:var(--accent); text-shadow:4px 4px 0 rgba(0,229,255,.3); white-space:nowrap; }
 
   .room-badge {
     background:var(--bg); border:3px solid var(--yellow);
@@ -151,8 +151,8 @@
     padding:6px 12px; font-size:clamp(16px,2.5vw,22px); color:var(--yellow);
     display:flex; align-items:center; gap:8px; letter-spacing:2px; white-space:nowrap;
   }
-  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:35px; font-family:'VT323',monospace; padding:0 2px; transition:color .1s; line-height:1; }
-  .copy-btn:hover { color:var(--green); transform:scale(1.2); }
+  .copy-btn { background:none; border:none; color:var(--yellow); cursor:pointer; font-size:22px; font-family:'VT323',monospace; padding:0 2px; transition:color .1s; line-height:1; }
+  .copy-btn:hover { color:var(--accent); transform:scale(1.2); }
 
   .online-count { display:flex; align-items:center; gap:8px; font-size:20px; color:var(--green); white-space:nowrap; }
   .px-dot { width:10px; height:10px; background:var(--green); flex-shrink:0; animation:blink 1.2s step-end infinite; }
@@ -337,6 +337,80 @@
   .invite-btn:hover { transform:translate(-1px,-1px); box-shadow:5px 5px 0 rgba(255,0,170,.3); }
   .invite-btn:active { transform:translate(1px,1px); }
 
+
+  /* ── REPLY FEATURE ── */
+  .reply-preview-bar {
+    display:none; padding:8px 18px; background:var(--panel);
+    border-top:2px solid var(--border); border-left:4px solid var(--accent);
+    align-items:center; gap:10px; flex-shrink:0;
+  }
+  .reply-preview-bar.show { display:flex; }
+  .reply-preview-content {
+    flex:1; min-width:0;
+  }
+  .reply-preview-author {
+    font-family:'Press Start 2P',monospace; font-size:7px;
+    margin-bottom:3px; letter-spacing:.5px;
+  }
+  .reply-preview-text {
+    font-size:16px; color:var(--muted);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .reply-cancel-btn {
+    background:none; border:none; color:var(--red);
+    font-size:20px; cursor:pointer; font-family:'VT323',monospace;
+    flex-shrink:0;
+  }
+
+  /* Reply quote inside bubble */
+  .reply-quote {
+    background:var(--bg2); border-left:3px solid var(--accent);
+    padding:5px 10px; margin-bottom:6px;
+    display:block;
+  }
+  .reply-quote-author {
+    font-family:'Press Start 2P',monospace; font-size:7px;
+    display:block; margin-bottom:3px;
+  }
+  .reply-quote-text {
+    font-size:16px; color:var(--muted);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    display:block; max-width:500px;
+  }
+
+  /* Swipe/click reply button on message */
+  .msg-actions {
+    display:flex; gap:6px; align-items:center;
+    margin-top:4px; opacity:0; transition:opacity .15s;
+  }
+  .msg-group:hover .msg-actions { opacity:1; }
+  .msg-action-btn {
+    background:var(--bg2); border:2px solid var(--border);
+    color:var(--muted); font-family:'VT323',monospace;
+    font-size:15px; padding:2px 8px; cursor:pointer;
+    transition:all .08s; letter-spacing:1px;
+  }
+  .msg-action-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .msg-action-btn.edit-btn:hover { border-color:var(--yellow); color:var(--yellow); }
+
+  /* Edit mode input highlight */
+  .msg-input.editing {
+    border-color:var(--yellow) !important;
+    box-shadow:inset 3px 3px 0 rgba(0,0,0,.4), 0 0 0 2px rgba(255,230,0,.2) !important;
+  }
+  .edit-indicator {
+    font-family:'Press Start 2P',monospace; font-size:7px;
+    color:var(--yellow); padding:4px 18px 0;
+    display:none; letter-spacing:1px;
+  }
+  .edit-indicator.show { display:block; }
+
+  /* Edited tag on message */
+  .edited-tag {
+    font-size:13px; color:var(--muted);
+    margin-left:6px; letter-spacing:1px;
+  }
+
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:var(--bg); }
   ::-webkit-scrollbar-thumb { background:var(--border); }
@@ -349,12 +423,31 @@
     .lobby-card { padding:32px 22px; }
     .pixel-title { font-size:20px; }
 
-    /* Chatroom */
-    .chat-header { padding:10px 12px; }
-    .pixel-logo { font-size:12px; }
-    .room-badge { font-size:16px; padding:5px 8px; }
+    /* Chatroom — mobile header: logo+room center, invite+quit right */
+    .chat-header {
+      padding:8px 10px;
+      display:grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto;
+      align-items:center;
+      gap:6px;
+    }
+    .header-left {
+      grid-column: 1 / 3;
+      display:flex; align-items:center;
+      justify-content:space-between;
+      gap:8px; flex-wrap:nowrap; width:100%;
+    }
+    .header-right {
+      grid-column: 3;
+      display:flex; align-items:center; gap:6px; flex-shrink:0;
+    }
+    .pixel-logo { font-size:13px; margin-bottom:0; }
+    .room-badge { font-size:14px; padding:4px 8px; flex:1; justify-content:center; }
     .online-count { font-size:18px; } /* in sidebar */
     /* conn-pill is now in sidebar, always visible */
+    .invite-btn { font-size:6px; padding:7px 9px; }
+    .leave-btn { font-size:6px; padding:7px 9px; }
 
     /* Sidebar slides over on mobile */
     .sidebar {
@@ -422,8 +515,7 @@
       </svg>
     </div>
 
-    <!-- <div class="pixel-title">PIXELCHAT</div> -->
-     <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
+    <div class="pixel-title">PIXELCHAT</div>
     <div class="pixel-sub">&gt; MULTIPLAYER v2.0 <span class="blink">_</span></div>
 
     <div class="field-group">
@@ -450,16 +542,7 @@
   <div class="chat-header">
     <div class="header-left">
       <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
-
-      <div class="room-badge">
-        
-  <!-- <span class="room-icon">▣</span> -->
-
-  <span id="roomCodeDisplay"></span>
-  <button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button>
-</div>
-
-      <!-- <div class="room-badge">▣ <span id="roomCodeDisplay"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button></div> -->
+      <div class="room-badge">▣ <span id="roomCodeDisplay"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button></div>
       <button class="players-btn" onclick="toggleSidebar()">👾 PLAYERS</button>
     </div>
     <div class="header-right">
@@ -497,8 +580,20 @@
         <button class="preview-cancel" onclick="cancelMedia()">✕ CANCEL</button>
       </div>
 
+      <!-- reply preview -->
+      <div class="reply-preview-bar" id="replyPreviewBar">
+        <div class="reply-preview-content">
+          <div class="reply-preview-author" id="replyPreviewAuthor"></div>
+          <div class="reply-preview-text" id="replyPreviewText"></div>
+        </div>
+        <button class="reply-cancel-btn" onclick="cancelReply()">✕</button>
+      </div>
+
+      <!-- edit indicator -->
+      <div class="edit-indicator" id="editIndicator">✏ EDITING MESSAGE — ESC TO CANCEL</div>
+
       <div class="input-area">
-        <input type="file" id="fileInput" accept="image/*,video/*" onchange="onFileChosen(event)">
+        <input type="file" id="fileInput" accept="image/*,video/*,image/gif" onchange="onFileChosen(event)">
         <button class="media-btn" onclick="document.getElementById('fileInput').click()" title="Send image/video">📎</button>
         <input class="msg-input" id="msgInput" placeholder="> TYPE MESSAGE..." autocomplete="off" maxlength="2000"
                onkeydown="handleKey(event)" oninput="onTyping()">
@@ -530,10 +625,19 @@ let pendingJoin  = null;
 // typing state
 let typingTimer  = null;
 let amTyping     = false;
-const typingUsers = {}; // uid -> name
+const typingUsers = {};
 
 // pending media
-let pendingMedia = null; // { dataUrl, mediaType, fileName }
+let pendingMedia = null;
+
+// reply state
+let replyingTo = null; // { uid, name, text, colorIdx }
+
+// edit state
+let editingMsgId = null; // message DOM id being edited
+
+// message store (id -> { uid, text, el })
+const msgStore = {};
 
 // ── LOBBY ─────────────────────────────────────
 function createRoom() {
@@ -604,6 +708,9 @@ function onMsg(msg) {
   } else if (msg.type === 'message') {
     appendMsg(msg.msg);
 
+  } else if (msg.type === 'edit') {
+    applyEdit(msg);
+
   } else if (msg.type === 'typing') {
     handleTypingEvent(msg);
   }
@@ -611,24 +718,40 @@ function onMsg(msg) {
 
 // ── SEND TEXT ─────────────────────────────────
 function sendMessage() {
-  // If there's pending media, send it
-  if (pendingMedia) {
-    sendMedia();
-    return;
-  }
+  if (pendingMedia) { sendMedia(); return; }
+
   const inp  = document.getElementById('msgInput');
   const text = inp.value.trim();
-  if (!text || !ws || ws.readyState !== 1) return;
+  if (!text) return;
+
+  // EDIT MODE
+  if (editingMsgId) {
+    if (!ws || ws.readyState !== 1) return;
+    ws.send(JSON.stringify({ type:'edit', msgId: editingMsgId, text }));
+    inp.value = '';
+    cancelEdit();
+    stopTyping();
+    return;
+  }
+
+  if (!ws || ws.readyState !== 1) return;
   inp.value = '';
   stopTyping();
-  ws.send(JSON.stringify({ type:'chat', text }));
+
+  const payload = { type:'chat', text };
+  if (replyingTo) {
+    payload.replyTo = replyingTo;
+    cancelReply();
+  }
+  ws.send(JSON.stringify(payload));
 }
 
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  if (e.key === 'Escape') { cancelEdit(); cancelReply(); }
 }
 
-// ── TYPING EVENTS ─────────────────────────────
+// ── TYPING ────────────────────────────────────
 function onTyping() {
   if (!ws || ws.readyState !== 1) return;
   if (!amTyping) {
@@ -647,59 +770,98 @@ function stopTyping() {
 }
 
 function handleTypingEvent({ uid, name, isTyping }) {
-  if (isTyping) {
-    typingUsers[uid] = name;
-  } else {
-    delete typingUsers[uid];
-  }
+  if (isTyping) typingUsers[uid] = name;
+  else delete typingUsers[uid];
   renderTypingBar();
 }
 
 function renderTypingBar() {
   const bar = document.getElementById('typingBar');
   const names = Object.values(typingUsers);
-  if (names.length === 0) {
-    bar.innerHTML = '';
-    return;
-  }
+  if (!names.length) { bar.innerHTML = ''; return; }
   const who = names.length === 1 ? names[0]
     : names.length === 2 ? `${names[0]} & ${names[1]}`
-    : `${names[0]} & ${names.length - 1} OTHERS`;
+    : `${names[0]} & ${names.length-1} OTHERS`;
   const verb = names.length === 1 ? 'IS TYPING' : 'ARE TYPING';
-  bar.innerHTML = `
-    <span style="color:var(--accent2)">${esc(who)}</span>&nbsp;${verb}
-    <span class="typing-dots"><span></span><span></span><span></span></span>
-  `;
+  bar.innerHTML = `<span style="color:var(--accent2)">${esc(who)}</span>&nbsp;${verb}<span class="typing-dots"><span></span><span></span><span></span></span>`;
+}
+
+// ── REPLY ──────────────────────────────────────
+function startReply(msgId) {
+  const m = msgStore[msgId];
+  if (!m) return;
+  replyingTo = { msgId, uid: m.uid, name: m.name, text: m.text, colorIdx: m.colorIdx };
+  const fg = COLORS[m.colorIdx || 0];
+  document.getElementById('replyPreviewAuthor').textContent = '↩ ' + m.name;
+  document.getElementById('replyPreviewAuthor').style.color = fg;
+  document.getElementById('replyPreviewText').textContent = m.text || '[media]';
+  document.getElementById('replyPreviewBar').classList.add('show');
+  document.getElementById('msgInput').focus();
+}
+
+function cancelReply() {
+  replyingTo = null;
+  document.getElementById('replyPreviewBar').classList.remove('show');
+  document.getElementById('replyPreviewAuthor').textContent = '';
+  document.getElementById('replyPreviewText').textContent = '';
+}
+
+// ── EDIT ───────────────────────────────────────
+function startEdit(msgId) {
+  const m = msgStore[msgId];
+  if (!m || m.uid !== myUID) return; // can only edit own messages
+  editingMsgId = msgId;
+  const inp = document.getElementById('msgInput');
+  inp.value = m.text;
+  inp.classList.add('editing');
+  document.getElementById('editIndicator').classList.add('show');
+  inp.focus();
+  inp.setSelectionRange(inp.value.length, inp.value.length);
+}
+
+function cancelEdit() {
+  if (!editingMsgId) return;
+  editingMsgId = null;
+  const inp = document.getElementById('msgInput');
+  inp.value = '';
+  inp.classList.remove('editing');
+  document.getElementById('editIndicator').classList.remove('show');
+}
+
+function applyEdit({ msgId, text }) {
+  const m = msgStore[msgId];
+  if (!m) return;
+  m.text = text;
+  // Update the bubble text in DOM
+  const bubble = m.el.querySelector('.bubble');
+  if (bubble && !bubble.querySelector('img') && !bubble.querySelector('video')) {
+    // Remove existing edited tag if any
+    const existingTag = bubble.querySelector('.edited-tag');
+    if (existingTag) existingTag.remove();
+    bubble.textContent = text;
+    const tag = document.createElement('span');
+    tag.className = 'edited-tag';
+    tag.textContent = '(edited)';
+    bubble.appendChild(tag);
+  }
 }
 
 // ── MEDIA ─────────────────────────────────────
 function onFileChosen(e) {
   const file = e.target.files[0];
   if (!file) return;
-
-  // 8 MB limit (will be base64-encoded, so ~6 MB raw max)
-  if (file.size > 6 * 1024 * 1024) {
-    showToast('!! FILE TOO LARGE (MAX 6MB)');
-    e.target.value = '';
-    return;
-  }
+  if (file.size > 6 * 1024 * 1024) { showToast('!! FILE TOO LARGE (MAX 6MB)'); e.target.value=''; return; }
 
   const reader = new FileReader();
   reader.onload = (ev) => {
     const dataUrl = ev.target.result;
     pendingMedia = { dataUrl, mediaType: file.type, fileName: file.name };
-
-    // Show preview
     const bar = document.getElementById('mediaPreviewBar');
     const thumb = document.getElementById('previewThumb');
-    const nameel = document.getElementById('previewName');
-    nameel.textContent = file.name;
-    if (file.type.startsWith('image/')) {
-      thumb.src = dataUrl;
-      thumb.style.display = 'block';
-    } else {
-      thumb.style.display = 'none';
-    }
+    document.getElementById('previewName').textContent = file.name;
+    if (file.type.startsWith('image/') || file.type === 'image/gif') {
+      thumb.src = dataUrl; thumb.style.display = 'block';
+    } else { thumb.style.display = 'none'; }
     bar.classList.add('show');
   };
   reader.readAsDataURL(file);
@@ -714,7 +876,9 @@ function cancelMedia() {
 
 function sendMedia() {
   if (!pendingMedia || !ws || ws.readyState !== 1) return;
-  ws.send(JSON.stringify({ type:'media', ...pendingMedia }));
+  const payload = { type:'media', ...pendingMedia };
+  if (replyingTo) { payload.replyTo = replyingTo; cancelReply(); }
+  ws.send(JSON.stringify(payload));
   cancelMedia();
 }
 
@@ -723,8 +887,7 @@ function leaveRoom() {
   clearTimeout(reconnTimer);
   pendingJoin = null; currentRoom = null;
   if (ws) { ws.onclose = null; ws.onerror = null; ws.close(); ws = null; }
-  stopTyping();
-  cancelMedia();
+  stopTyping(); cancelMedia(); cancelReply(); cancelEdit();
   document.getElementById('chatroom').style.display = 'none';
   document.getElementById('lobby').style.display    = 'flex';
   document.getElementById('messagesList').innerHTML = '';
@@ -733,6 +896,7 @@ function leaveRoom() {
   document.getElementById('typingBar').innerHTML    = '';
   lastMsgUID = null;
   Object.keys(typingUsers).forEach(k => delete typingUsers[k]);
+  Object.keys(msgStore).forEach(k => delete msgStore[k]);
   closeSidebar();
 }
 
@@ -766,69 +930,89 @@ function appendMsg(m) {
 
   if (m.type === 'system') {
     const el = document.createElement('div');
-    el.className = 'sys-msg';
-    el.textContent = m.text;
-    list.appendChild(el);
-    lastMsgUID = null;
-  } else {
-    const isSelf = m.uid === myUID;
-    const grp = document.createElement('div');
-    grp.className = 'msg-group' + (isSelf ? ' self' : '');
-
-    // Always show meta (name + uid + time) for every message group change
-    if (m.uid !== lastMsgUID) {
-      const fg = COLORS[m.colorIdx || 0];
-      const meta = document.createElement('div');
-      meta.className = 'msg-meta';
-      meta.innerHTML = `
-        <span class="msg-author" style="color:${fg}">${esc(m.name)}</span>
-        <span class="msg-uid-tag">#${m.uid}</span>
-        <span class="msg-time">${fmtTime(m.ts)}</span>
-      `;
-      grp.appendChild(meta);
-    }
-
-    const b = document.createElement('div');
-    b.className = 'bubble';
-
-    if (m.type === 'media') {
-      // render image or video
-      const nameEl = document.createElement('span');
-      nameEl.className = 'media-name';
-      nameEl.textContent = '📎 ' + m.fileName;
-      b.appendChild(nameEl);
-
-      if (m.mediaType.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src = m.dataUrl;
-        img.alt = m.fileName;
-        img.loading = 'lazy';
-        b.appendChild(img);
-      } else if (m.mediaType.startsWith('video/')) {
-        const vid = document.createElement('video');
-        vid.src = m.dataUrl;
-        vid.controls = true;
-        vid.preload = 'metadata';
-        b.appendChild(vid);
-      }
-    } else {
-      b.textContent = m.text;
-    }
-
-    grp.appendChild(b);
-    list.appendChild(grp);
-    lastMsgUID = m.uid;
+    el.className = 'sys-msg'; el.textContent = m.text;
+    list.appendChild(el); lastMsgUID = null;
+    if (atBottom) list.scrollTop = list.scrollHeight;
+    return;
   }
+
+  const isSelf = m.uid === myUID;
+  const msgId = m.msgId || (m.uid + '_' + m.ts);
+  const grp = document.createElement('div');
+  grp.className = 'msg-group' + (isSelf ? ' self' : '');
+  grp.dataset.msgId = msgId;
+
+  if (m.uid !== lastMsgUID) {
+    const fg = COLORS[m.colorIdx || 0];
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.innerHTML = `
+      <span class="msg-author" style="color:${fg}">${esc(m.name)}</span>
+      <span class="msg-uid-tag">#${m.uid}</span>
+      <span class="msg-time">${fmtTime(m.ts)}</span>
+    `;
+    grp.appendChild(meta);
+  }
+
+  const b = document.createElement('div');
+  b.className = 'bubble';
+
+  // Reply quote
+  if (m.replyTo) {
+    const fg = COLORS[m.replyTo.colorIdx || 0];
+    const q = document.createElement('div');
+    q.className = 'reply-quote';
+    q.innerHTML = `<span class="reply-quote-author" style="color:${fg}">↩ ${esc(m.replyTo.name)}</span><span class="reply-quote-text">${esc(m.replyTo.text || '[media]')}</span>`;
+    // clicking the quote scrolls to original
+    q.style.cursor = 'pointer';
+    q.onclick = () => scrollToMsg(m.replyTo.msgId);
+    b.appendChild(q);
+  }
+
+  if (m.type === 'media') {
+    const nameEl = document.createElement('span');
+    nameEl.className = 'media-name';
+    nameEl.textContent = '📎 ' + m.fileName;
+    b.appendChild(nameEl);
+    if (m.mediaType.startsWith('image/') || m.mediaType === 'image/gif') {
+      const img = document.createElement('img');
+      img.src = m.dataUrl; img.alt = m.fileName; img.loading = 'lazy';
+      b.appendChild(img);
+    } else if (m.mediaType.startsWith('video/')) {
+      const vid = document.createElement('video');
+      vid.src = m.dataUrl; vid.controls = true; vid.preload = 'metadata';
+      b.appendChild(vid);
+    }
+  } else {
+    b.textContent = m.text;
+  }
+
+  grp.appendChild(b);
+
+  // Action buttons (reply + edit if own)
+  const actions = document.createElement('div');
+  actions.className = 'msg-actions';
+  actions.innerHTML = `<button class="msg-action-btn" onclick="startReply('${msgId}')">↩ REPLY</button>${isSelf && m.type !== 'media' ? `<button class="msg-action-btn edit-btn" onclick="startEdit('${msgId}')">✏ EDIT</button>` : ''}`;
+  grp.appendChild(actions);
+
+  list.appendChild(grp);
+  lastMsgUID = m.uid;
+
+  // Store for reply/edit lookup
+  msgStore[msgId] = { uid: m.uid, name: m.name, text: m.text || '', colorIdx: m.colorIdx || 0, el: grp };
 
   if (atBottom) list.scrollTop = list.scrollHeight;
 }
 
+function scrollToMsg(msgId) {
+  const el = document.querySelector(`[data-msg-id="${msgId}"]`);
+  if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.style.outline = '2px solid var(--accent)'; setTimeout(()=>el.style.outline='',1200); }
+}
+
 // ── SIDEBAR (mobile) ──────────────────────────
 function toggleSidebar() {
-  const s = document.getElementById('sidebar');
-  const o = document.getElementById('sidebarOverlay');
-  s.classList.toggle('open');
-  o.classList.toggle('show');
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
 }
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
@@ -870,14 +1054,11 @@ function esc(s) {
 }
 
 // ── SHARE LINK ────────────────────────────────
-// On load: if ?room=CODE is in URL, pre-fill the room code field
-// and generate a share link button after joining
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const roomParam = params.get('room');
   if (roomParam) {
     document.getElementById('roomInput').value = roomParam.toUpperCase();
-    // highlight it so user knows it was pre-filled
     const inp = document.getElementById('roomInput');
     inp.style.borderColor = 'var(--yellow)';
     inp.style.boxShadow = 'inset 3px 3px 0 rgba(0,0,0,.4), 0 0 0 2px rgba(255,230,0,.3)';
