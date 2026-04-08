@@ -151,7 +151,7 @@
     padding:6px 12px; font-size:clamp(16px,2.5vw,22px); color:var(--yellow);
     display:flex; align-items:center; gap:8px; letter-spacing:2px; white-space:nowrap;
   }
-  .copy-btn { background:none; border:none; color:var(--yellow); cursor:pointer; font-size:22px; font-family:'VT323',monospace; padding:0 2px; transition:color .1s; line-height:1; }
+  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:22px; font-family:'VT323',monospace; padding:0 2px; transition:color .1s; line-height:1; }
   .copy-btn:hover { color:var(--accent); transform:scale(1.2); }
 
   .online-count { display:flex; align-items:center; gap:8px; font-size:20px; color:var(--green); white-space:nowrap; }
@@ -423,31 +423,26 @@
     .lobby-card { padding:32px 22px; }
     .pixel-title { font-size:20px; }
 
-    /* Chatroom — mobile header: logo+room center, invite+quit right */
+    /* Chatroom — mobile header: clean flex row */
     .chat-header {
       padding:8px 10px;
-      display:grid;
-      grid-template-columns: auto 1fr auto;
-      grid-template-rows: auto;
-      align-items:center;
-      gap:6px;
+      display:flex; flex-direction:row;
+      align-items:center; justify-content:space-between;
+      flex-wrap:nowrap; gap:8px;
     }
     .header-left {
-      grid-column: 1 / 3;
       display:flex; align-items:center;
-      justify-content:space-between;
-      gap:8px; flex-wrap:nowrap; width:100%;
+      gap:8px; flex-wrap:nowrap; flex:1; min-width:0;
     }
     .header-right {
-      grid-column: 3;
-      display:flex; align-items:center; gap:6px; flex-shrink:0;
+      display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:auto;
     }
-    .pixel-logo { font-size:13px; margin-bottom:0; }
-    .room-badge { font-size:14px; padding:4px 8px; flex:1; justify-content:center; }
-    .online-count { font-size:18px; } /* in sidebar */
-    /* conn-pill is now in sidebar, always visible */
-    .invite-btn { font-size:6px; padding:7px 9px; }
-    .leave-btn { font-size:6px; padding:7px 9px; }
+    .pixel-logo { font-size:11px !important; margin-bottom:0 !important; white-space:nowrap; }
+    .room-badge { font-size:13px; padding:4px 8px; min-width:0; flex-shrink:1; }
+    .online-count { font-size:18px; }
+    .invite-btn { font-size:6px !important; padding:6px 8px !important; white-space:nowrap; }
+    .leave-btn { font-size:6px !important; padding:6px 8px !important; white-space:nowrap; }
+    .players-btn { font-size:6px; padding:6px 8px; white-space:nowrap; }
 
     /* Sidebar slides over on mobile */
     .sidebar {
@@ -515,7 +510,7 @@
       </svg>
     </div>
 
-    <div class="pixel-title">PIXELCHAT</div>
+    <div class="pixel-logo" style="font-size:clamp(22px,5vw,32px);margin-bottom:8px;">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
     <div class="pixel-sub">&gt; MULTIPLAYER v2.0 <span class="blink">_</span></div>
 
     <div class="field-group">
@@ -542,7 +537,7 @@
   <div class="chat-header">
     <div class="header-left">
       <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
-      <div class="room-badge">▣ <span id="roomCodeDisplay"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button></div>
+      <div class="room-badge"><span id="roomCodeDisplay"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button></div>
       <button class="players-btn" onclick="toggleSidebar()">👾 PLAYERS</button>
     </div>
     <div class="header-right">
@@ -984,7 +979,9 @@ function appendMsg(m) {
       b.appendChild(vid);
     }
   } else {
-    b.textContent = m.text;
+    const textNode = document.createElement('span');
+    textNode.textContent = m.text;
+    b.appendChild(textNode);
   }
 
   grp.appendChild(b);
