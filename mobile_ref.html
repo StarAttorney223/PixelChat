@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -27,7 +27,7 @@
     color:var(--text);
     font-family:'VT323',monospace;
     font-size:18px;
-    height:100vh;
+    height:100vh; height:100dvh;
     display:flex;
     flex-direction:column;
     overflow:hidden;
@@ -42,12 +42,12 @@
     pointer-events:none; z-index:0;
   }
 
-  /* ══════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      LOBBY
-  ══════════════════════════════════════ */
+  ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
   #lobby {
     display:flex; align-items:center; justify-content:center;
-    height:100vh; position:relative; z-index:1;
+    height:100vh; height:100dvh; position:relative; z-index:1;
     padding:20px;
   }
 
@@ -128,30 +128,56 @@
   }
   @keyframes hp-fill { to{width:100%} }
 
-  /* ══════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      CHATROOM
-  ══════════════════════════════════════ */
-  #chatroom { display:none; height:100vh; flex-direction:column; position:relative; z-index:1; }
+  ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+  #chatroom { display:none; height:100vh; height:100dvh; flex-direction:column; position:relative; z-index:1; }
 
   /* HEADER */
   .chat-header {
+    display:grid; grid-template-columns: auto 1fr auto; align-items:center;
+    padding:8px 18px; background:var(--bg2);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    flex-shrink:0; height: 56px;
+  }
+  .header-left { justify-self: start; }
+  .header-right { justify-self: end; display:flex; gap:16px; }
+
+  .pixel-logo { padding: 0 24px; font-family:'Press Start 2P',monospace; font-size:clamp(16px,2.5vw,22px); color:var(--accent); text-shadow:0 0 8px rgba(0,229,255,.4), 4px 4px 0 rgba(0,229,255,.2); white-space:nowrap; text-align:center; margin:0; line-height:1.2; }
+
+  /* Minimal Icon Buttons & SVGs */
+  .icon-btn {
+    background: transparent; border: none; padding: 0; border-radius: 8px;
+    width: 32px; height: 32px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease; outline: none;
+  }
+  .icon-btn svg { width: 20px; height: 20px; stroke-width: 2px; }
+  
+  .players-icon-btn { color: var(--text); opacity: 0.8; }
+  .players-icon-btn:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(224, 224, 255, 0.6)); }
+  .players-icon-btn:active { transform: scale(0.9); }
+
+  .invite-icon-btn { color: var(--accent); }
+  .invite-icon-btn:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8)); }
+  .invite-icon-btn:active { transform: scale(0.9); }
+
+  .quit-icon-btn { color: var(--red); opacity: 0.8; }
+  .quit-icon-btn:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255, 51, 85, 0.8)); }
+  .quit-icon-btn:active { transform: scale(0.9); }
+
+  /* Sidebar Room Badge */
+  .sidebar-room-badge {
     display:flex; align-items:center; justify-content:space-between;
-    padding:12px 20px; background:var(--bg2);
-    border-bottom:4px solid var(--border);
-    flex-shrink:0; gap:10px; flex-wrap:wrap;
+    padding:10px 14px; background:var(--bg); border-bottom:2px solid var(--border);
+    font-size:clamp(16px,2.5vw,20px); color:var(--yellow); letter-spacing:2px;
   }
-  .header-center { display:flex; align-items:center; gap:14px; flex-wrap:wrap; flex:1; min-width:0; }
-
-  .pixel-logo { font-family:'Press Start 2P',monospace; font-size:clamp(16px,2.5vw,22px); color:var(--accent); text-shadow:4px 4px 0 rgba(0,229,255,.3); white-space:nowrap; }
-
-  .room-badge {
-    background:var(--bg); border:3px solid var(--yellow);
-    box-shadow:3px 3px 0 rgba(255,230,0,.2);
-    padding:6px 12px; font-size:clamp(16px,2.5vw,22px); color:var(--yellow);
-    display:flex; align-items:center; gap:8px; letter-spacing:2px; white-space:nowrap;
-  }
-  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:22px; font-family:'VT323',monospace; padding:0 2px; transition:color .1s; line-height:1; }
-  .copy-btn:hover { color:var(--accent); transform:scale(1.2); }
+  .room-label { color:var(--muted); font-size:12px; margin-right:8px; font-family:'Press Start 2P',monospace; }
+  #roomCodeDisplay { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; }
+  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; width: 24px; height: 24px; display:flex; align-items:center; justify-content:center; padding:0; transition:all 0.1s; }
+  .copy-btn svg { width: 18px; height: 18px; stroke-width: 2px; }
+  .copy-btn:hover { color:var(--accent); transform:scale(1.2); filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.8)); }
 
   .online-count { display:flex; align-items:center; gap:8px; font-size:20px; color:var(--green); white-space:nowrap; }
   .px-dot { width:10px; height:10px; background:var(--green); flex-shrink:0; animation:blink 1.2s step-end infinite; }
@@ -164,22 +190,10 @@
   .conn-pill.connecting   { color:var(--yellow); border-color:var(--yellow); animation:blink .5s step-end infinite; }
   .conn-pill.disconnected { color:var(--red);    border-color:var(--red); }
 
-  .header-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-
-  .leave-btn {
-    background:var(--bg); border:3px solid var(--red); color:var(--red);
-    font-family:'Press Start 2P',monospace; font-size:clamp(7px,1.2vw,9px);
-    padding:9px 14px; cursor:pointer;
-    box-shadow:3px 3px 0 rgba(255,51,85,.3);
-    letter-spacing:1px; transition:all .08s; white-space:nowrap; flex-shrink:0;
-  }
-  .leave-btn:hover { transform:translate(-1px,-1px); box-shadow:5px 5px 0 rgba(255,51,85,.3); }
-  .leave-btn:active { transform:translate(1px,1px); }
-
   /* BODY */
   .chat-body { display:flex; flex:1; overflow:hidden; }
 
-  /* SIDEBAR — WhatsApp-style balance */
+  /* SIDEBAR ΓÇö WhatsApp-style balance */
   .sidebar {
     width:38%; min-width:300px; max-width:440px; background:var(--bg2);
     border-right:4px solid var(--border);
@@ -236,7 +250,7 @@
 
   .bubble { background:var(--panel); border:3px solid var(--border); box-shadow:3px 3px 0 rgba(0,0,0,.4); padding:11px 16px; font-size:24px; line-height:1.45; word-break:break-word; max-width:min(620px,90%); display:inline-block; }
 
-  /* media bubble — crisp, above scanline overlay */
+  /* media bubble ΓÇö crisp, above scanline overlay */
   .bubble img, .bubble video {
     display:block; max-width:100%; max-height:340px;
     border:2px solid var(--border); margin-top:4px;
@@ -321,7 +335,7 @@
   .toast.show { opacity:1; transform:translateY(0); }
 
 
-  /* share invite btn — right side of header */
+  /* share invite btn ΓÇö right side of header */
   .share-link-btn {
     font-size:17px; margin-left:2px;
   }
@@ -337,7 +351,7 @@
   .invite-btn:active { transform:translate(1px,1px); }
 
 
-  /* ── REPLY FEATURE ── */
+  /* ΓöÇΓöÇ REPLY FEATURE ΓöÇΓöÇ */
   .reply-preview-bar {
     display:none; padding:8px 18px; background:var(--panel);
     border-top:2px solid var(--border); border-left:4px solid var(--accent);
@@ -414,7 +428,7 @@
   ::-webkit-scrollbar-track { background:var(--bg); }
   ::-webkit-scrollbar-thumb { background:var(--border); }
 
-  /* Lobby logo — separate from header logo */
+  /* Lobby logo ΓÇö separate from header logo */
   .lobby-logo {
     font-family:'Press Start 2P',monospace;
     font-size:clamp(22px,5vw,32px);
@@ -424,55 +438,23 @@
   }
   .lobby-logo span { color:var(--accent2); }
 
-  .mobile-only { display: none !important; }
-  .desktop-only { display: flex; }
-
-  /* Minimal Icon Buttons & SVGs (mobile update) */
-  .icon-btn {
-    background: transparent; border: none; padding: 0; border-radius: 8px;
-    width: 32px; height: 32px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s ease; outline: none;
-  }
-  .icon-btn svg { width: 20px; height: 20px; stroke-width: 2px; }
-  .players-icon-btn { color: var(--text); opacity: 0.8; }
-  .players-icon-btn:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(224, 224, 255, 0.6)); }
-  .invite-icon-btn { color: var(--accent); }
-  .invite-icon-btn:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8)); }
-  .quit-icon-btn { color: var(--red); opacity: 0.8; }
-  .quit-icon-btn:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255, 51, 85, 0.8)); }
-
-  .sidebar-room-badge {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:10px 14px; background:var(--bg); border-bottom:2px solid var(--border);
-    font-size:clamp(16px,2.5vw,20px); color:var(--yellow); letter-spacing:2px;
-  }
-
-  /* ══════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      RESPONSIVE
-  ══════════════════════════════════════ */
+  ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
   @media (max-width:768px) {
-    .mobile-only { display: flex !important; }
-    div.mobile-only.pixel-logo { display: block !important; }
-    .desktop-only { display: none !important; }
-
     /* Lobby */
     .lobby-card { padding:32px 22px; }
     .pixel-title { font-size:20px; }
 
-    /* ── LOBBY mobile ── */
+    /* ΓöÇΓöÇ LOBBY mobile ΓöÇΓöÇ */
     .lobby-logo { font-size:24px !important; }
 
-    /* ── CHATROOM header mobile ── */
+    /* ΓöÇΓöÇ CHATROOM header mobile ΓöÇΓöÇ */
     .chat-header {
       padding:8px 10px;
       gap:6px;
-      display: grid !important;
-      grid-template-columns: auto 1fr auto;
     }
-    .header-left { justify-self: start; }
-    .header-right { justify-self: end; gap:16px; }
-    .pixel-logo { padding: 0 24px; font-size:18px !important; margin-bottom:0 !important; text-align:center; }
+    .pixel-logo { font-size:18px !important; margin-bottom:0 !important; }
     .icon-btn { padding:6px; font-size:18px; }
 
     .online-count { font-size:18px; }
@@ -503,7 +485,7 @@
 </head>
 <body>
 
-<!-- ══ LOBBY ══ -->
+<!-- ΓòÉΓòÉ LOBBY ΓòÉΓòÉ -->
 <div id="lobby">
   <div class="lobby-card">
     <div class="sprite-row">
@@ -546,54 +528,34 @@
     <div class="pixel-sub">&gt; MULTIPLAYER v2.0 <span class="blink">_</span></div>
 
     <div class="field-group">
-      <label class="field-label">▶ PLAYER NAME</label>
+      <label class="field-label">Γû╢ PLAYER NAME</label>
       <input type="text" id="nameInput" placeholder="ENTER NAME..." maxlength="20" autocomplete="off">
     </div>
     <div class="field-group">
-      <label class="field-label">▶ ROOM CODE</label>
+      <label class="field-label">Γû╢ ROOM CODE</label>
       <input type="text" id="roomInput" placeholder="ENTER CODE..." maxlength="20" autocomplete="off" style="text-transform:uppercase">
     </div>
 
     <div id="lobbyError" class="error-msg"></div>
 
     <div style="margin-top:24px">
-      <button class="btn btn-primary" onclick="joinRoom()">► JOIN ROOM</button>
+      <button class="btn btn-primary" onclick="joinRoom()">Γû║ JOIN ROOM</button>
       <button class="btn btn-secondary" onclick="createRoom()">+ CREATE NEW ROOM</button>
     </div>
     <div class="hp-bar"><div class="hp-fill"></div></div>
   </div>
 </div>
 
-<!-- ══ CHATROOM ══ -->
+<!-- ΓòÉΓòÉ CHATROOM ΓòÉΓòÉ -->
 <div id="chatroom">
   <div class="chat-header">
-    <!-- Desktop: Text players button -->
-    <button class="players-btn desktop-only" onclick="toggleSidebar()" style="display:none;">👾 PLAYERS</button>
-
-    <!-- Mobile: SVG players button -->
-    <div class="header-left mobile-only">
+    <div class="header-left">
       <button class="icon-btn players-icon-btn" onclick="toggleSidebar()" title="Players">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </button>
     </div>
-
-    <!-- Desktop Center -->
-    <div class="header-center desktop-only">
-      <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
-      <div class="room-badge"><span class="roomCodeDisplayVal"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button></div>
-    </div>
-
-    <!-- Mobile Center Logo -->
-    <div class="pixel-logo mobile-only">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
-
-    <!-- Desktop Right -->
-    <div class="header-right desktop-only">
-      <button class="invite-btn" onclick="copyShareLink()">🔗 INVITE</button>
-      <button class="leave-btn" onclick="leaveRoom()">✕ QUIT</button>
-    </div>
-
-    <!-- Mobile Right -->
-    <div class="header-right mobile-only">
+    <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
+    <div class="header-right">
       <button class="icon-btn invite-icon-btn" onclick="copyShareLink()" title="Invite">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </button>
@@ -609,14 +571,17 @@
 
     <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        👾 PLAYERS IN ROOM
-        <button class="sidebar-close-btn" onclick="closeSidebar()">✕</button>
+        <span class="panel-title" style="display:flex; align-items:center; gap:8px;">
+          <svg style="width:20px; height:20px; stroke-width:2px; color:var(--text); opacity:0.8;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          PLAYERS
+        </span>
+        <button class="sidebar-close-btn" onclick="closeSidebar()">Γ£ò</button>
       </div>
-      <div class="sidebar-room-badge mobile-only">
+      <div class="sidebar-room-badge">
         <span class="room-label">ROOM:</span>
-        <span class="roomCodeDisplayVal"></span>
+        <span id="roomCodeDisplay"></span>
         <button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
         </button>
       </div>
       <div class="sidebar-status">
@@ -636,7 +601,7 @@
       <div class="media-preview-bar" id="mediaPreviewBar">
         <img class="preview-thumb" id="previewThumb" src="" alt="">
         <span class="preview-name" id="previewName"></span>
-        <button class="preview-cancel" onclick="cancelMedia()">✕ CANCEL</button>
+        <button class="preview-cancel" onclick="cancelMedia()">Γ£ò CANCEL</button>
       </div>
 
       <!-- reply preview -->
@@ -645,18 +610,18 @@
           <div class="reply-preview-author" id="replyPreviewAuthor"></div>
           <div class="reply-preview-text" id="replyPreviewText"></div>
         </div>
-        <button class="reply-cancel-btn" onclick="cancelReply()">✕</button>
+        <button class="reply-cancel-btn" onclick="cancelReply()">Γ£ò</button>
       </div>
 
       <!-- edit indicator -->
-      <div class="edit-indicator" id="editIndicator">✏ EDITING MESSAGE — ESC TO CANCEL</div>
+      <div class="edit-indicator" id="editIndicator">Γ£Å EDITING MESSAGE ΓÇö ESC TO CANCEL</div>
 
       <div class="input-area">
         <input type="file" id="fileInput" accept="image/*,video/*,image/gif" onchange="onFileChosen(event)">
-        <button class="media-btn" onclick="document.getElementById('fileInput').click()" title="Send image/video">📎</button>
+        <button class="media-btn" onclick="document.getElementById('fileInput').click()" title="Send image/video">≡ƒôÄ</button>
         <input class="msg-input" id="msgInput" placeholder="> TYPE MESSAGE..." autocomplete="off" maxlength="2000"
                onkeydown="handleKey(event)" oninput="onTyping()">
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()">SEND ►</button>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">SEND Γû║</button>
       </div>
     </div>
   </div>
@@ -665,10 +630,10 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── CONFIG ────────────────────────────────────
+// ΓöÇΓöÇ CONFIG ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 // const WS_URL = "ws://localhost:3001";  // local dev
 const WS_URL = "wss://pixelchat-535b.onrender.com"; // deployed
-// ─────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 const COLORS    = ["#00e5ff","#ff00aa","#ffe600","#00ff88","#ff3355","#cc88ff","#ff8800","#88ffee"];
 const BG_COLORS = ["#003344","#330022","#332200","#003322","#330011","#220033","#331a00","#002222"];
@@ -698,7 +663,7 @@ let editingMsgId = null; // message DOM id being edited
 // message store (id -> { uid, text, el })
 const msgStore = {};
 
-// ── LOBBY ─────────────────────────────────────
+// ΓöÇΓöÇ LOBBY ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function createRoom() {
   const name = document.getElementById('nameInput').value.trim();
   if (!name) return showError("!! ENTER PLAYER NAME FIRST");
@@ -722,7 +687,7 @@ function doJoin(name, code) {
   openWS(name, code);
 }
 
-// ── WEBSOCKET ─────────────────────────────────
+// ΓöÇΓöÇ WEBSOCKET ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function openWS(name, code) {
   if (ws) { ws.onclose = null; ws.onerror = null; ws.close(); ws = null; }
   setConn('connecting');
@@ -754,12 +719,14 @@ function onMsg(msg) {
     myUID = msg.uid; myName = msg.name; currentRoom = msg.room;
     document.getElementById('lobby').style.display    = 'none';
     document.getElementById('chatroom').style.display = 'flex';
-    document.querySelectorAll('.roomCodeDisplayVal').forEach(el => el.textContent = msg.room);
+    document.getElementById('roomCodeDisplay').textContent = msg.room;
     document.getElementById('messagesList').innerHTML = '';
     lastMsgUID = null;
     (msg.history || []).forEach(appendMsg);
     setInputEnabled(true);
-    document.getElementById('msgInput').focus();
+    if (window.innerWidth > 700) {
+      document.getElementById('msgInput').focus();
+    }
 
   } else if (msg.type === 'user_list') {
     renderUsers(msg.users);
@@ -775,7 +742,7 @@ function onMsg(msg) {
   }
 }
 
-// ── SEND TEXT ─────────────────────────────────
+// ΓöÇΓöÇ SEND TEXT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function sendMessage() {
   if (pendingMedia) { sendMedia(); return; }
 
@@ -810,7 +777,7 @@ function handleKey(e) {
   if (e.key === 'Escape') { cancelEdit(); cancelReply(); }
 }
 
-// ── TYPING ────────────────────────────────────
+// ΓöÇΓöÇ TYPING ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function onTyping() {
   if (!ws || ws.readyState !== 1) return;
   if (!amTyping) {
@@ -845,13 +812,13 @@ function renderTypingBar() {
   bar.innerHTML = `<span style="color:var(--accent2)">${esc(who)}</span>&nbsp;${verb}<span class="typing-dots"><span></span><span></span><span></span></span>`;
 }
 
-// ── REPLY ──────────────────────────────────────
+// ΓöÇΓöÇ REPLY ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function startReply(msgId) {
   const m = msgStore[msgId];
   if (!m) return;
   replyingTo = { msgId, uid: m.uid, name: m.name, text: m.text, colorIdx: m.colorIdx };
   const fg = COLORS[m.colorIdx || 0];
-  document.getElementById('replyPreviewAuthor').textContent = '↩ ' + m.name;
+  document.getElementById('replyPreviewAuthor').textContent = 'Γå⌐ ' + m.name;
   document.getElementById('replyPreviewAuthor').style.color = fg;
   document.getElementById('replyPreviewText').textContent = m.text || '[media]';
   document.getElementById('replyPreviewBar').classList.add('show');
@@ -865,7 +832,7 @@ function cancelReply() {
   document.getElementById('replyPreviewText').textContent = '';
 }
 
-// ── EDIT ───────────────────────────────────────
+// ΓöÇΓöÇ EDIT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function startEdit(msgId) {
   const m = msgStore[msgId];
   if (!m || m.uid !== myUID) return; // can only edit own messages
@@ -905,7 +872,7 @@ function applyEdit({ msgId, text }) {
   }
 }
 
-// ── MEDIA ─────────────────────────────────────
+// ΓöÇΓöÇ MEDIA ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function onFileChosen(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -941,7 +908,7 @@ function sendMedia() {
   cancelMedia();
 }
 
-// ── LEAVE ─────────────────────────────────────
+// ΓöÇΓöÇ LEAVE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function leaveRoom() {
   clearTimeout(reconnTimer);
   pendingJoin = null; currentRoom = null;
@@ -959,7 +926,7 @@ function leaveRoom() {
   closeSidebar();
 }
 
-// ── RENDER USERS ──────────────────────────────
+// ΓöÇΓöÇ RENDER USERS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function renderUsers(users) {
   document.getElementById('onlineCount').textContent = users.length;
   const list = document.getElementById('userList');
@@ -982,7 +949,7 @@ function renderUsers(users) {
   });
 }
 
-// ── RENDER MESSAGE ────────────────────────────
+// ΓöÇΓöÇ RENDER MESSAGE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function appendMsg(m) {
   const list = document.getElementById('messagesList');
   const atBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 100;
@@ -1021,7 +988,7 @@ function appendMsg(m) {
     const fg = COLORS[m.replyTo.colorIdx || 0];
     const q = document.createElement('div');
     q.className = 'reply-quote';
-    q.innerHTML = `<span class="reply-quote-author" style="color:${fg}">↩ ${esc(m.replyTo.name)}</span><span class="reply-quote-text">${esc(m.replyTo.text || '[media]')}</span>`;
+    q.innerHTML = `<span class="reply-quote-author" style="color:${fg}">Γå⌐ ${esc(m.replyTo.name)}</span><span class="reply-quote-text">${esc(m.replyTo.text || '[media]')}</span>`;
     // clicking the quote scrolls to original
     q.style.cursor = 'pointer';
     q.onclick = () => scrollToMsg(m.replyTo.msgId);
@@ -1031,7 +998,7 @@ function appendMsg(m) {
   if (m.type === 'media') {
     const nameEl = document.createElement('span');
     nameEl.className = 'media-name';
-    nameEl.textContent = '📎 ' + m.fileName;
+    nameEl.textContent = '≡ƒôÄ ' + m.fileName;
     b.appendChild(nameEl);
     if (m.mediaType.startsWith('image/') || m.mediaType === 'image/gif') {
       const img = document.createElement('img');
@@ -1053,7 +1020,7 @@ function appendMsg(m) {
   // Action buttons (reply + edit if own)
   const actions = document.createElement('div');
   actions.className = 'msg-actions';
-  actions.innerHTML = `<button class="msg-action-btn" onclick="startReply('${msgId}')">↩ REPLY</button>${isSelf && m.type !== 'media' ? `<button class="msg-action-btn edit-btn" onclick="startEdit('${msgId}')">✏ EDIT</button>` : ''}`;
+  actions.innerHTML = `<button class="msg-action-btn" onclick="startReply('${msgId}')">Γå⌐ REPLY</button>${isSelf && m.type !== 'media' ? `<button class="msg-action-btn edit-btn" onclick="startEdit('${msgId}')">Γ£Å EDIT</button>` : ''}`;
   grp.appendChild(actions);
 
   list.appendChild(grp);
@@ -1070,7 +1037,7 @@ function scrollToMsg(msgId) {
   if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.style.outline = '2px solid var(--accent)'; setTimeout(()=>el.style.outline='',1200); }
 }
 
-// ── SIDEBAR (mobile) ──────────────────────────
+// ΓöÇΓöÇ SIDEBAR (mobile) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarOverlay').classList.toggle('show');
@@ -1080,7 +1047,7 @@ function closeSidebar() {
   document.getElementById('sidebarOverlay').classList.remove('show');
 }
 
-// ── HELPERS ───────────────────────────────────
+// ΓöÇΓöÇ HELPERS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function setConn(state) {
   const el = document.getElementById('connPill');
   if (!el) return;
@@ -1114,7 +1081,7 @@ function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ── SHARE LINK ────────────────────────────────
+// ΓöÇΓöÇ SHARE LINK ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const roomParam = params.get('room');
