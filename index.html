@@ -135,12 +135,13 @@
 
   /* HEADER */
   .chat-header {
-    display:flex; align-items:center; justify-content:space-between;
+    display:flex; align-items:center;
     padding:12px 20px; background:var(--bg2);
     border-bottom:4px solid var(--border);
-    flex-shrink:0; gap:10px; flex-wrap:wrap;
+    flex-shrink:0; gap:14px;
   }
-  .header-center { display:flex; align-items:center; gap:14px; flex-wrap:wrap; flex:1; min-width:0; }
+  .header-controls { display:flex; align-items:center; gap:14px; flex:1; min-width:0; }
+  .btn-icon { display: none; }
 
   .pixel-logo { font-family:'Press Start 2P',monospace; font-size:clamp(16px,2.5vw,22px); color:var(--accent); text-shadow:4px 4px 0 rgba(0,229,255,.3); white-space:nowrap; }
 
@@ -149,8 +150,10 @@
     box-shadow:3px 3px 0 rgba(255,230,0,.2);
     padding:6px 12px; font-size:clamp(16px,2.5vw,22px); color:var(--yellow);
     display:flex; align-items:center; gap:8px; letter-spacing:2px; white-space:nowrap;
+    margin-right:auto;
   }
-  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:22px; font-family:'VT323',monospace; padding:0 2px; transition:color .1s; line-height:1; }
+  #roomCodeDisplay { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:22px; font-family:sans-serif; padding:0 2px; transition:color .1s; line-height:1; }
   .copy-btn:hover { color:var(--accent); transform:scale(1.2); }
 
   .online-count { display:flex; align-items:center; gap:8px; font-size:20px; color:var(--green); white-space:nowrap; }
@@ -427,7 +430,7 @@
   /* ══════════════════════════════════════
      RESPONSIVE
   ══════════════════════════════════════ */
-  @media (max-width:700px) {
+  @media (max-width:768px) {
     /* Lobby */
     .lobby-card { padding:32px 22px; }
     .pixel-title { font-size:20px; }
@@ -435,71 +438,68 @@
     /* ── LOBBY mobile ── */
     .lobby-logo { font-size:24px !important; }
 
-    /* ── CHATROOM header mobile ──
-       Layout: [👾PLAYERS]  [LOGO · ROOMCODE]  [🔗][✕]
-       Players on left, logo+code in middle flex, invite+quit on right
-    */
+    /* ── CHATROOM header mobile ── */
     .chat-header {
-      padding:7px 10px;
+      padding:10px 10px;
       display:flex;
-      flex-direction:row;
+      flex-direction:column;
       align-items:center;
+      gap:8px;
+    }
+    .header-controls {
+      display:flex;
+      width:100%;
       justify-content:space-between;
-      flex-wrap:nowrap;
+      align-items:center;
       gap:6px;
-      background:var(--bg2);
-      border-bottom:4px solid var(--border);
     }
-    .header-center {
-      display:flex; align-items:center;
-      gap:6px; flex-wrap:nowrap;
-      flex:1; min-width:0; justify-content:center;
-    }
-    .header-right {
-      display:flex; align-items:center;
-      gap:6px; flex-shrink:0;
-    }
-    /* PLAYERS button — left, short label */
+
+    /* Swap text for icons */
+    .btn-text { display: none; }
+    .btn-icon { display: inline-block; font-size: 16px; font-family: sans-serif; line-height: 1; }
+    
+    .pixel-logo { font-size:18px !important; margin-bottom:0 !important; }
+
+    /* PLAYERS button */
     .players-btn {
       display:flex !important;
-      align-items:center;
-      gap:3px;
-      font-size:6px !important;
-      padding:7px 8px !important;
-      white-space:nowrap;
+      align-items:center; justify-content:center;
+      padding:8px !important;
       flex-shrink:0;
       border:2px solid var(--accent2) !important;
       box-shadow:2px 2px 0 #550033 !important;
     }
-    /* Chatroom logo — shrink just for header, not lobby */
-    .pixel-logo {
-      font-size:9px !important;
-      margin-bottom:0 !important;
-      white-space:nowrap;
-      flex-shrink:0;
-    }
+
     /* Room code badge */
     .room-badge {
-      font-size:13px !important;
-      padding:3px 7px !important;
-      gap:4px !important;
-      letter-spacing:1px !important;
-      flex-shrink:1; min-width:0;
+      margin-right: 0;
+      font-size:14px !important;
+      padding:6px 8px !important;
+      gap:6px !important;
+      flex:1;
+      min-width:0;
+      justify-content:center;
+      max-width: fit-content;
     }
-    .copy-btn { font-size:15px !important; }
-    /* INVITE button — right, icon+short label */
+    #roomCodeDisplay {
+      max-width: 140px; /* give some room for truncating */
+    }
+    .copy-btn { font-size:16px !important; }
+
+    .header-right {
+      display:flex; align-items:center; gap:6px; flex-shrink:0;
+    }
+
+    /* INVITE button */
     .invite-btn {
-      font-size:6px !important;
-      padding:7px 8px !important;
-      white-space:nowrap;
+      padding:8px !important; display:flex !important; align-items:center; justify-content:center;
       border:2px solid var(--accent2) !important;
       box-shadow:2px 2px 0 rgba(255,0,170,.3) !important;
     }
-    /* QUIT button — right, short label */
+    
+    /* QUIT button */
     .leave-btn {
-      font-size:6px !important;
-      padding:7px 8px !important;
-      white-space:nowrap;
+      padding:8px !important; display:flex !important; align-items:center; justify-content:center;
       border:2px solid var(--red) !important;
       box-shadow:2px 2px 0 rgba(255,51,85,.3) !important;
     }
@@ -596,14 +596,29 @@
 <!-- ══ CHATROOM ══ -->
 <div id="chatroom">
   <div class="chat-header">
-    <button class="players-btn" onclick="toggleSidebar()">👾 PLAYERS</button>
-    <div class="header-center">
-      <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
-      <div class="room-badge"><span id="roomCodeDisplay"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button></div>
-    </div>
-    <div class="header-right">
-      <button class="invite-btn" onclick="copyShareLink()">🔗 INVITE</button>
-      <button class="leave-btn" onclick="leaveRoom()">✕ QUIT</button>
+    <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
+    
+    <div class="header-controls">
+      <button class="players-btn" onclick="toggleSidebar()" title="Players">
+        <span class="btn-text">👾 PLAYERS</span>
+        <span class="btn-icon">👥</span>
+      </button>
+      
+      <div class="room-badge" title="Room Code">
+        <span id="roomCodeDisplay"></span>
+        <button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">📋</button>
+      </div>
+      
+      <div class="header-right">
+        <button class="invite-btn" onclick="copyShareLink()" title="Invite">
+          <span class="btn-text">🔗 INVITE</span>
+          <span class="btn-icon">🔗</span>
+        </button>
+        <button class="leave-btn" onclick="leaveRoom()" title="Quit">
+          <span class="btn-text">✕ QUIT</span>
+          <span class="btn-icon">❌</span>
+        </button>
+      </div>
     </div>
   </div>
 
