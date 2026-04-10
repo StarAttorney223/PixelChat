@@ -136,32 +136,35 @@
   /* HEADER */
   .chat-header {
     display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;
-    padding:12px 20px; background:var(--bg2);
-    border-bottom:4px solid var(--border);
-    flex-shrink:0; gap:14px;
+    padding:0 16px; background:var(--bg2);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    flex-shrink:0; height: 56px; gap:16px;
   }
-  .header-left { display:flex; justify-content:flex-start; }
-  .header-right { display:flex; justify-content:flex-end; gap:12px; }
+  .header-left { display:flex; justify-content:flex-start; margin-left:0; }
+  .header-right { display:flex; justify-content:flex-end; gap:16px; margin-right:0; }
 
-  .pixel-logo { font-family:'Press Start 2P',monospace; font-size:clamp(16px,2.5vw,22px); color:var(--accent); text-shadow:4px 4px 0 rgba(0,229,255,.3); white-space:nowrap; text-align:center; margin:0; line-height:1.2; }
+  .pixel-logo { font-family:'Press Start 2P',monospace; font-size:clamp(16px,2.5vw,22px); color:var(--accent); text-shadow:0 0 8px rgba(0,229,255,.4), 4px 4px 0 rgba(0,229,255,.2); white-space:nowrap; text-align:center; margin:0; line-height:1.2; }
 
-  /* Minimal Icon Buttons */
+  /* Minimal Icon Buttons & SVGs */
   .icon-btn {
-    background: transparent; border: none; padding: 6px; border-radius: 8px; font-size: 24px;
+    background: transparent; border: none; padding: 0; border-radius: 8px;
+    width: 32px; height: 32px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    line-height: 1; font-family: sans-serif; transition: all 0.2s ease;
+    transition: all 0.2s ease; outline: none;
   }
+  .icon-btn svg { width: 20px; height: 20px; stroke-width: 2px; }
   
   .players-icon-btn { color: var(--text); opacity: 0.8; }
-  .players-icon-btn:hover { opacity: 1; transform: scale(1.1); text-shadow: 0 0 10px rgba(224, 224, 255, 0.6); }
+  .players-icon-btn:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(224, 224, 255, 0.6)); }
   .players-icon-btn:active { transform: scale(0.9); }
 
   .invite-icon-btn { color: var(--accent); }
-  .invite-icon-btn:hover { transform: scale(1.1); text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); }
+  .invite-icon-btn:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8)); }
   .invite-icon-btn:active { transform: scale(0.9); }
 
   .quit-icon-btn { color: var(--red); opacity: 0.8; }
-  .quit-icon-btn:hover { opacity: 1; transform: scale(1.1); text-shadow: 0 0 12px rgba(255, 51, 85, 0.8); }
+  .quit-icon-btn:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255, 51, 85, 0.8)); }
   .quit-icon-btn:active { transform: scale(0.9); }
 
   /* Sidebar Room Badge */
@@ -172,8 +175,9 @@
   }
   .room-label { color:var(--muted); font-size:12px; margin-right:8px; font-family:'Press Start 2P',monospace; }
   #roomCodeDisplay { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; }
-  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:18px; font-family:sans-serif; padding:0 4px; transition:all 0.1s; }
-  .copy-btn:hover { color:var(--accent); transform:scale(1.2); }
+  .copy-btn { background:none; border:none; color:var(--accent); cursor:pointer; width: 24px; height: 24px; display:flex; align-items:center; justify-content:center; padding:0; transition:all 0.1s; }
+  .copy-btn svg { width: 18px; height: 18px; stroke-width: 2px; }
+  .copy-btn:hover { color:var(--accent); transform:scale(1.2); filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.8)); }
 
   .online-count { display:flex; align-items:center; gap:8px; font-size:20px; color:var(--green); white-space:nowrap; }
   .px-dot { width:10px; height:10px; background:var(--green); flex-shrink:0; animation:blink 1.2s step-end infinite; }
@@ -546,12 +550,18 @@
 <div id="chatroom">
   <div class="chat-header">
     <div class="header-left">
-      <button class="icon-btn players-icon-btn" onclick="toggleSidebar()" title="Players">👥</button>
+      <button class="icon-btn players-icon-btn" onclick="toggleSidebar()" title="Players">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </button>
     </div>
     <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
     <div class="header-right">
-      <button class="icon-btn invite-icon-btn" onclick="copyShareLink()" title="Invite">🔗</button>
-      <button class="icon-btn quit-icon-btn" onclick="leaveRoom()" title="Quit">❌</button>
+      <button class="icon-btn invite-icon-btn" onclick="copyShareLink()" title="Invite">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </button>
+      <button class="icon-btn quit-icon-btn" onclick="leaveRoom()" title="Quit">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
     </div>
   </div>
 
@@ -567,7 +577,9 @@
       <div class="sidebar-room-badge">
         <span class="room-label">ROOM:</span>
         <span id="roomCodeDisplay"></span>
-        <button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">📋</button>
+        <button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
       </div>
       <div class="sidebar-status">
         <div class="online-count"><div class="px-dot"></div><span id="onlineCount">0</span>&nbsp;ONLINE</div>
