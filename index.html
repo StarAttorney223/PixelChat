@@ -27,7 +27,7 @@
     color:var(--text);
     font-family:'VT323',monospace;
     font-size:18px;
-    height:100vh;
+    height:100vh; height:100dvh;
     display:flex;
     flex-direction:column;
     overflow:hidden;
@@ -47,7 +47,7 @@
   ══════════════════════════════════════ */
   #lobby {
     display:flex; align-items:center; justify-content:center;
-    height:100vh; position:relative; z-index:1;
+    height:100vh; height:100dvh; position:relative; z-index:1;
     padding:20px;
   }
 
@@ -131,7 +131,7 @@
   /* ══════════════════════════════════════
      CHATROOM
   ══════════════════════════════════════ */
-  #chatroom { display:none; height:100vh; flex-direction:column; position:relative; z-index:1; }
+  #chatroom { display:none; height:100vh; height:100dvh; flex-direction:column; position:relative; z-index:1; }
 
   /* HEADER */
   .chat-header {
@@ -756,7 +756,9 @@ function onMsg(msg) {
     lastMsgUID = null;
     (msg.history || []).forEach(appendMsg);
     setInputEnabled(true);
-    document.getElementById('msgInput').focus();
+    if (window.innerWidth > 700) {
+      document.getElementById('msgInput').focus();
+    }
 
   } else if (msg.type === 'user_list') {
     renderUsers(msg.users);
