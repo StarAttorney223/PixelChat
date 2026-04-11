@@ -27,7 +27,7 @@
     color:var(--text);
     font-family:'VT323',monospace;
     font-size:18px;
-    height:100vh;
+    height:100vh; height:100dvh;
     display:flex;
     flex-direction:column;
     overflow:hidden;
@@ -47,7 +47,7 @@
   ══════════════════════════════════════ */
   #lobby {
     display:flex; align-items:center; justify-content:center;
-    height:100vh; position:relative; z-index:1;
+    height:100vh; height:100dvh; position:relative; z-index:1;
     padding:20px;
   }
 
@@ -138,7 +138,7 @@
   /* ══════════════════════════════════════
      CHATROOM
   ══════════════════════════════════════ */
-  #chatroom { display:none; height:100vh; flex-direction:column; position:relative; z-index:1; }
+  #chatroom { display:none; height:100vh; height:100dvh; flex-direction:column; position:relative; z-index:1; }
 
   /* HEADER */
   .chat-header {
@@ -385,6 +385,7 @@
     margin-top:4px; opacity:0; transition:opacity .15s;
   }
   .msg-group:hover .msg-actions { opacity:1; }
+  .msg-actions:has(.active) { opacity:1; }
   .msg-action-btn {
     background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.1);
     color:var(--muted); font-family:'VT323',monospace; border-radius:6px;
@@ -394,18 +395,34 @@
   }
   .msg-action-btn:hover { border-color:var(--accent); color:var(--accent); box-shadow:0 0 10px rgba(0,229,255,.2); transform:scale(1.02); }
   .msg-action-btn.edit-btn:hover { border-color:var(--yellow); color:var(--yellow); box-shadow:0 0 10px rgba(255,230,0,.2); }
+  .msg-action-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(0,229,255,.08); }
+  .msg-action-btn.edit-btn.active { border-color:var(--yellow); color:var(--yellow); background:rgba(255,230,0,.08); }
 
   /* Edit mode input highlight */
   .msg-input.editing {
     border-color:var(--yellow) !important;
     box-shadow:inset 3px 3px 0 rgba(0,0,0,.4), 0 0 0 2px rgba(255,230,0,.2) !important;
   }
+
+  /* ── EDIT INDICATOR BAR ── matches reply-preview-bar style */
   .edit-indicator {
-    font-family:'Press Start 2P',monospace; font-size:7px;
-    color:var(--yellow); padding:4px 18px 0;
-    display:none; letter-spacing:1px;
+    display:none; padding:8px 18px; background:var(--panel);
+    border-top:2px solid var(--border); border-left:4px solid var(--yellow);
+    align-items:center; gap:10px; flex-shrink:0;
   }
-  .edit-indicator.show { display:block; }
+  .edit-indicator.show { display:flex; }
+  .edit-indicator-content {
+    flex:1; display:flex; align-items:center; gap:8px;
+    font-family:'Press Start 2P',monospace; font-size:7px;
+    color:var(--yellow); letter-spacing:1px;
+  }
+  .edit-cancel-btn {
+    background:none; border:none; color:var(--red);
+    font-size:20px; cursor:pointer; font-family:'VT323',monospace;
+    flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    transition:transform .15s, color .15s;
+  }
+  .edit-cancel-btn:hover { color:var(--red); transform:scale(1.15); }
 
   /* Edited tag on message */
   .edited-tag {
@@ -652,8 +669,16 @@
         <button class="reply-cancel-btn" onclick="cancelReply()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
-      <!-- edit indicator -->
-      <div class="edit-indicator" id="editIndicator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>EDITING MESSAGE — ESC TO CANCEL</div>
+      <!-- edit indicator — now a full bar matching the reply bar style -->
+      <div class="edit-indicator" id="editIndicator">
+        <div class="edit-indicator-content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          EDITING MESSAGE
+        </div>
+        <button class="edit-cancel-btn" onclick="cancelEdit()" title="Cancel edit (Esc)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
 
       <div class="input-area">
         <input type="file" id="fileInput" accept="image/*,video/*,image/gif" onchange="onFileChosen(event)">
@@ -864,19 +889,29 @@ function renderTypingBar() {
 
 // ── REPLY ──────────────────────────────────────
 function startReply(msgId) {
+  // Toggle off if already replying to the same message
+  if (replyingTo && replyingTo.msgId === msgId) { cancelReply(); return; }
   const m = msgStore[msgId];
   if (!m) return;
+  // Clear previous active reply button
+  document.querySelectorAll('.reply-btn.active').forEach(b => b.classList.remove('active'));
   replyingTo = { msgId, uid: m.uid, name: m.name, text: m.text, colorIdx: m.colorIdx };
   const theme = getPlayerTheme(m.uid, m.colorIdx);
-  const fg = theme.fg;
   document.getElementById('replyPreviewAuthor').textContent = '↩ ' + m.name;
-  document.getElementById('replyPreviewAuthor').style.color = fg;
+  document.getElementById('replyPreviewAuthor').style.color = theme.fg;
   document.getElementById('replyPreviewText').textContent = m.text || '[media]';
   document.getElementById('replyPreviewBar').classList.add('show');
+  // Highlight the reply button for this message
+  const grp = document.querySelector(`[data-msg-id="${msgId}"]`);
+  if (grp) grp.querySelector('.reply-btn')?.classList.add('active');
   document.getElementById('msgInput').focus();
 }
 
 function cancelReply() {
+  if (replyingTo) {
+    const grp = document.querySelector(`[data-msg-id="${replyingTo.msgId}"]`);
+    if (grp) grp.querySelector('.reply-btn')?.classList.remove('active');
+  }
   replyingTo = null;
   document.getElementById('replyPreviewBar').classList.remove('show');
   document.getElementById('replyPreviewAuthor').textContent = '';
@@ -886,18 +921,27 @@ function cancelReply() {
 // ── EDIT ───────────────────────────────────────
 function startEdit(msgId) {
   const m = msgStore[msgId];
-  if (!m || m.uid !== myUID) return; // can only edit own messages
+  if (!m || m.uid !== myUID) return;
+  // Toggle off if already editing the same message
+  if (editingMsgId === msgId) { cancelEdit(); return; }
+  // Clear previous active edit button
+  document.querySelectorAll('.edit-btn.active').forEach(b => b.classList.remove('active'));
   editingMsgId = msgId;
   const inp = document.getElementById('msgInput');
   inp.value = m.text;
   inp.classList.add('editing');
   document.getElementById('editIndicator').classList.add('show');
+  // Highlight the edit button for this message
+  const grp = document.querySelector(`[data-msg-id="${msgId}"]`);
+  if (grp) grp.querySelector('.edit-btn')?.classList.add('active');
   inp.focus();
   inp.setSelectionRange(inp.value.length, inp.value.length);
 }
 
 function cancelEdit() {
   if (!editingMsgId) return;
+  const grp = document.querySelector(`[data-msg-id="${editingMsgId}"]`);
+  if (grp) grp.querySelector('.edit-btn')?.classList.remove('active');
   editingMsgId = null;
   const inp = document.getElementById('msgInput');
   inp.value = '';
@@ -1085,7 +1129,7 @@ function appendMsg(m) {
   // Action buttons (reply + edit if own)
   const actions = document.createElement('div');
   actions.className = 'msg-actions';
-  actions.innerHTML = `<button class="msg-action-btn" onclick="startReply('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>REPLY</button>${isSelf && m.type !== 'media' ? `<button class="msg-action-btn edit-btn" onclick="startEdit('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>EDIT</button>` : ''}`;
+  actions.innerHTML = `<button class="msg-action-btn reply-btn" onclick="startReply('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>REPLY</button>${isSelf && m.type !== 'media' ? `<button class="msg-action-btn edit-btn" onclick="startEdit('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>EDIT</button>` : ''}`;
   grp.appendChild(actions);
 
   list.appendChild(grp);
