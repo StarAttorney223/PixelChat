@@ -817,7 +817,6 @@ function onMsg(msg) {
   }
 }
 
-// ── SEND TEXT ─────────────────────────────────
 function sendMessage() {
   if (pendingMedia) { sendMedia(); return; }
 
@@ -825,7 +824,7 @@ function sendMessage() {
   const text = inp.value.trim();
   if (!text) return;
 
-  // EDIT MODE
+  // EDIT MODE — no scroll needed, just updating in-place
   if (editingMsgId) {
     if (!ws || ws.readyState !== 1) return;
     ws.send(JSON.stringify({ type:'edit', msgId: editingMsgId, text }));
@@ -839,12 +838,36 @@ function sendMessage() {
   inp.value = '';
   stopTyping();
 
+  const wasReplying = !!replyingTo; // capture BEFORE cancelReply clears it
+
   const payload = { type:'chat', text };
   if (replyingTo) {
     payload.replyTo = replyingTo;
     cancelReply();
   }
   ws.send(JSON.stringify(payload));
+
+  // If we just sent a reply, force-scroll to bottom after the
+  // incoming 'message' event has had time to render into the DOM.
+  // Two rAF frames give the browser one full paint cycle; the
+  // 60 ms setTimeout is a safety net for slower connections where
+  // the server echo may arrive slightly later.
+  if (wasReplying) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    });
+    setTimeout(scrollToBottom, 60);
+  }
+}
+
+// Smooth-scroll the message list to the very bottom.
+// Safe to call multiple times — the second call is a no-op if
+// already at the bottom, so the double-trigger above causes no jitter.
+function scrollToBottom() {
+  const list = document.getElementById('messagesList');
+  list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
 }
 
 function handleKey(e) {
