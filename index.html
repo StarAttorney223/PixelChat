@@ -185,7 +185,7 @@
   /* BODY */
   .chat-body { display:flex; flex:1; overflow:hidden; }
 
-  /* SIDEBAR — WhatsApp-style balance */
+  /* SIDEBAR */
   .sidebar {
     width:38%; min-width:300px; max-width:440px; background:var(--bg2);
     border-right:4px solid var(--border);
@@ -199,7 +199,6 @@
     text-shadow:2px 2px 0 rgba(255,0,170,.3);
     display:flex; align-items:center; justify-content:space-between;
   }
-  /* mobile toggle btn */
   .sidebar-close-btn {
     display:none; background:none; border:none; color:var(--muted);
     font-family:'Press Start 2P',monospace; font-size:8px; cursor:pointer;
@@ -237,13 +236,11 @@
   .msg-meta { display:flex; align-items:center; gap:10px; margin-bottom:5px; flex-wrap:wrap; }
   .msg-author { font-family:'Press Start 2P',monospace; font-size:10px; letter-spacing:.5px; }
   .msg-uid-tag { display:none; }
-  /* Timestamp always visible */
   .msg-time { color:var(--muted); font-size:16px; margin-left:auto; letter-spacing:1px; }
 
   .bubble { background:var(--user-bg, rgba(26,26,53,0.6)); border:2px solid var(--user-color, rgba(0,229,255,0.25)); border-radius:8px; padding:11px 16px; font-size:24px; line-height:1.45; word-break:break-word; max-width:min(620px,90%); display:inline-block; transition:all 0.2s ease; }
   .msg-group .bubble:hover { box-shadow:0 0 12px var(--user-color, rgba(0,229,255,.15)); }
 
-  /* media bubble — crisp, above scanline overlay */
   .bubble img, .bubble video {
     display:block; max-width:100%; max-height:340px;
     border:2px solid var(--border); margin-top:4px;
@@ -277,7 +274,6 @@
   /* INPUT */
   .input-area { padding:12px 18px; border-top:1px solid rgba(255,255,255,0.05); display:flex; gap:10px; align-items:center; flex-shrink:0; }
 
-  /* hidden file input */
   #fileInput { display:none; }
 
   .media-btn {
@@ -310,7 +306,6 @@
   .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:100; }
   .sidebar-overlay.show { display:block; }
 
-  /* mobile players btn in header */
   .players-btn {
     display:none; background:var(--bg); border:3px solid var(--accent2); color:var(--accent2);
     font-family:'Press Start 2P',monospace; font-size:7px;
@@ -322,11 +317,7 @@
   .toast { position:fixed; bottom:20px; right:20px; background:var(--bg2); border:3px solid var(--green); box-shadow:4px 4px 0 rgba(0,255,136,.2); color:var(--green); font-size:16px; padding:10px 16px; letter-spacing:2px; opacity:0; transform:translateY(8px); transition:all .15s steps(3); z-index:9998; pointer-events:none; }
   .toast.show { opacity:1; transform:translateY(0); }
 
-
-  /* share invite btn — right side of header */
-  .share-link-btn {
-    font-size:17px; margin-left:2px;
-  }
+  .share-link-btn { font-size:17px; margin-left:2px; }
   .share-link-btn:hover { color:var(--yellow) !important; }
   .invite-btn {
     background:rgba(255,0,170,0.05); border:3px solid #ff00aa; color:var(--accent2);
@@ -337,7 +328,6 @@
   .invite-btn:hover { transform:scale(1.05); box-shadow:0 0 10px rgba(255,0,170,0.6); border-color:var(--accent2); }
   .invite-btn:active { transform:scale(0.98); }
 
-
   /* ── REPLY FEATURE ── */
   .reply-preview-bar {
     display:none; padding:8px 18px; background:var(--panel);
@@ -345,9 +335,7 @@
     align-items:center; gap:10px; flex-shrink:0;
   }
   .reply-preview-bar.show { display:flex; }
-  .reply-preview-content {
-    flex:1; min-width:0;
-  }
+  .reply-preview-content { flex:1; min-width:0; }
   .reply-preview-author {
     font-family:'Press Start 2P',monospace; font-size:7px;
     margin-bottom:3px; letter-spacing:.5px;
@@ -358,8 +346,7 @@
   }
   .reply-cancel-btn {
     background:none; border:none; color:var(--red);
-    font-size:20px; cursor:pointer; font-family:'VT323',monospace;
-    flex-shrink:0;
+    font-size:20px; cursor:pointer; font-family:'VT323',monospace; flex-shrink:0;
   }
 
   /* Reply quote inside bubble */
@@ -379,7 +366,6 @@
     display:block; max-width:500px;
   }
 
-  /* Swipe/click reply button on message */
   .msg-actions {
     display:flex; gap:6px; align-items:center;
     margin-top:4px; opacity:0; transition:opacity .15s;
@@ -398,13 +384,12 @@
   .msg-action-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(0,229,255,.08); }
   .msg-action-btn.edit-btn.active { border-color:var(--yellow); color:var(--yellow); background:rgba(255,230,0,.08); }
 
-  /* Edit mode input highlight */
   .msg-input.editing {
     border-color:var(--yellow) !important;
     box-shadow:inset 3px 3px 0 rgba(0,0,0,.4), 0 0 0 2px rgba(255,230,0,.2) !important;
   }
 
-  /* ── EDIT INDICATOR BAR ── matches reply-preview-bar style */
+  /* ── EDIT INDICATOR BAR ── */
   .edit-indicator {
     display:none; padding:8px 18px; background:var(--panel);
     border-top:2px solid var(--border); border-left:4px solid var(--yellow);
@@ -424,7 +409,6 @@
   }
   .edit-cancel-btn:hover { color:var(--red); transform:scale(1.15); }
 
-  /* Edited tag on message */
   .edited-tag {
     font-size:13px; color:var(--muted);
     margin-left:6px; letter-spacing:1px;
@@ -435,7 +419,6 @@
   ::-webkit-scrollbar-track { background:var(--bg); }
   ::-webkit-scrollbar-thumb { background:var(--border); }
 
-  /* Lobby logo — separate from header logo */
   .lobby-logo {
     font-family:'Press Start 2P',monospace;
     font-size:clamp(22px,5vw,32px);
@@ -448,7 +431,6 @@
   .mobile-only { display: none !important; }
   .desktop-only { display: flex; }
 
-  /* Minimal Icon Buttons & SVGs (mobile update) */
   .icon-btn {
     background: transparent; border: none; padding: 0; border-radius: 8px;
     width: 32px; height: 32px;
@@ -477,14 +459,10 @@
     div.mobile-only.pixel-logo { display: block !important; }
     .desktop-only { display: none !important; }
 
-    /* Lobby */
     .lobby-card { padding:32px 22px; }
     .pixel-title { font-size:20px; }
-
-    /* ── LOBBY mobile ── */
     .lobby-logo { font-size:24px !important; }
 
-    /* ── CHATROOM header mobile ── */
     .chat-header {
       padding:8px 10px;
       gap:6px;
@@ -495,10 +473,8 @@
     .header-right { justify-self: end; gap:16px; }
     .pixel-logo { padding: 0 24px; font-size:18px !important; margin-bottom:0 !important; text-align:center; }
     .icon-btn { padding:6px; font-size:18px; }
-
     .online-count { font-size:18px; }
 
-    /* Sidebar slides over on mobile */
     .sidebar {
       position:fixed; top:0; left:0; bottom:0;
       z-index:101; width:85%;
@@ -508,13 +484,11 @@
     .sidebar.open { transform:translateX(0); }
     .sidebar-close-btn { display:block; }
 
-    /* Messages fill full width */
     .messages-area { width:100%; }
     .messages-list { padding:14px 14px; }
     .bubble { font-size:20px; max-width:90%; }
     .msg-author { font-size:8px; }
 
-    /* Input */
     .input-area { padding:10px 12px; gap:8px; }
     .msg-input { font-size:22px; padding:8px 12px; }
     .send-btn { font-size:9px; padding:10px 12px; }
@@ -588,32 +562,26 @@
 <!-- ══ CHATROOM ══ -->
 <div id="chatroom">
   <div class="chat-header">
-    <!-- Desktop: Text players button -->
     <button class="players-btn desktop-only" onclick="toggleSidebar()" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-bottom:-2px;margin-right:2px"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>PLAYERS</button>
 
-    <!-- Mobile: SVG players button -->
     <div class="header-left mobile-only">
       <button class="icon-btn players-icon-btn" onclick="toggleSidebar()" title="Players">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </button>
     </div>
 
-    <!-- Desktop Center -->
     <div class="header-center desktop-only">
       <div class="pixel-logo">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
       <div class="room-badge"><span class="roomCodeDisplayVal"></span><button class="copy-btn" onclick="copyRoomCode()" title="Copy room code">⎘</button></div>
     </div>
 
-    <!-- Mobile Center Logo -->
     <div class="pixel-logo mobile-only">PIXEL<span style="color:var(--accent2)">CHAT</span></div>
 
-    <!-- Desktop Right -->
     <div class="header-right desktop-only">
       <button class="invite-btn" onclick="copyShareLink()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-bottom:-2px;margin-right:2px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>INVITE</button>
       <button class="leave-btn" onclick="leaveRoom()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-bottom:-2px;margin-right:2px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>QUIT</button>
     </div>
 
-    <!-- Mobile Right -->
     <div class="header-right mobile-only">
       <button class="icon-btn invite-icon-btn" onclick="copyShareLink()" title="Invite">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -625,7 +593,6 @@
   </div>
 
   <div class="chat-body">
-    <!-- sidebar overlay for mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <div class="sidebar" id="sidebar">
@@ -650,17 +617,14 @@
     <div class="messages-area">
       <div class="messages-list" id="messagesList"></div>
 
-      <!-- typing bar -->
       <div class="typing-bar" id="typingBar"></div>
 
-      <!-- media preview -->
       <div class="media-preview-bar" id="mediaPreviewBar">
         <img class="preview-thumb" id="previewThumb" src="" alt="">
         <span class="preview-name" id="previewName"></span>
         <button class="preview-cancel" onclick="cancelMedia()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-bottom:-3px;margin-right:2px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>CANCEL</button>
       </div>
 
-      <!-- reply preview -->
       <div class="reply-preview-bar" id="replyPreviewBar">
         <div class="reply-preview-content">
           <div class="reply-preview-author" id="replyPreviewAuthor"></div>
@@ -669,7 +633,6 @@
         <button class="reply-cancel-btn" onclick="cancelReply()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
-      <!-- edit indicator — now a full bar matching the reply bar style -->
       <div class="edit-indicator" id="editIndicator">
         <div class="edit-indicator-content">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
@@ -708,7 +671,7 @@ function getPlayerTheme(uid, colorIdx) {
   if (idx === 0) {
     let hash = 0;
     for(let i=0; i<uid.length; i++) hash += uid.charCodeAt(i);
-    idx = (hash % (COLORS.length - 1)) + 1; // 1 through 7 mapped from uid
+    idx = (hash % (COLORS.length - 1)) + 1;
   }
   return { fg: COLORS[idx], bg: BG_COLORS[idx] };
 }
@@ -721,21 +684,14 @@ let lastMsgUID   = null;
 let reconnTimer  = null;
 let pendingJoin  = null;
 
-// typing state
 let typingTimer  = null;
 let amTyping     = false;
 const typingUsers = {};
 
-// pending media
 let pendingMedia = null;
+let replyingTo   = null;
+let editingMsgId = null;
 
-// reply state
-let replyingTo = null; // { uid, name, text, colorIdx }
-
-// edit state
-let editingMsgId = null; // message DOM id being edited
-
-// message store (id -> { uid, text, el })
 const msgStore = {};
 
 // ── LOBBY ─────────────────────────────────────
@@ -817,6 +773,49 @@ function onMsg(msg) {
   }
 }
 
+// ── SCROLL TO BOTTOM (mobile-safe) ────────────────────────────────────────
+// Two-pass strategy:
+//   Pass 1 — double rAF: fires after the browser's next paint, ensuring the
+//             new message node is in the DOM and its height is known.
+//   Pass 2 — 150 ms setTimeout: catches the secondary reflow that happens
+//             when reply-preview-bar / edit-indicator / media-preview-bar
+//             collapse *after* cancelReply() / cancelEdit() runs, which
+//             shifts the flex layout and changes scrollHeight.
+//
+// On mobile we bypass scrollTo({ behavior:'smooth' }) entirely and use a
+// direct scrollTop assignment. The native momentum scroller on iOS/Android
+// intercepts smooth scroll and consistently lands 40-80 px short when the
+// container height just changed. Instant assignment always hits the true
+// bottom. On desktop smooth animation is fine and feels better.
+//
+// The +4 px buffer handles sub-pixel rounding in some Android WebViews
+// where scrollHeight can be reported 1-3 px less than the true maximum.
+// Calling this function twice is safe — if already at the bottom the second
+// call is a no-op and causes no visible jitter.
+function scrollToBottom() {
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const list     = document.getElementById('messagesList');
+
+  function doScroll() {
+    const target = list.scrollHeight + 4;
+    if (isMobile) {
+      // Instant on mobile — avoids the "stops short" bug.
+      list.scrollTop = target;
+    } else {
+      list.scrollTo({ top: target, behavior: 'smooth' });
+    }
+  }
+
+  // Pass 1: after next two paint frames (node in DOM + first layout pass)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(doScroll);
+  });
+
+  // Pass 2: after collapsing bars finish reflowing
+  setTimeout(doScroll, 150);
+}
+
+// ── SEND TEXT ─────────────────────────────────
 function sendMessage() {
   if (pendingMedia) { sendMedia(); return; }
 
@@ -824,7 +823,7 @@ function sendMessage() {
   const text = inp.value.trim();
   if (!text) return;
 
-  // EDIT MODE — no scroll needed, just updating in-place
+  // EDIT MODE — update in-place, no scroll needed
   if (editingMsgId) {
     if (!ws || ws.readyState !== 1) return;
     ws.send(JSON.stringify({ type:'edit', msgId: editingMsgId, text }));
@@ -838,7 +837,8 @@ function sendMessage() {
   inp.value = '';
   stopTyping();
 
-  const wasReplying = !!replyingTo; // capture BEFORE cancelReply clears it
+  // Capture BEFORE cancelReply() clears the state
+  const wasReplying = !!replyingTo;
 
   const payload = { type:'chat', text };
   if (replyingTo) {
@@ -847,27 +847,11 @@ function sendMessage() {
   }
   ws.send(JSON.stringify(payload));
 
-  // If we just sent a reply, force-scroll to bottom after the
-  // incoming 'message' event has had time to render into the DOM.
-  // Two rAF frames give the browser one full paint cycle; the
-  // 60 ms setTimeout is a safety net for slower connections where
-  // the server echo may arrive slightly later.
+  // Force-scroll to bottom after a reply (user may be scrolled far up).
+  // scrollToBottom() runs two passes — see its comment above for details.
   if (wasReplying) {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        scrollToBottom();
-      });
-    });
-    setTimeout(scrollToBottom, 60);
+    scrollToBottom();
   }
-}
-
-// Smooth-scroll the message list to the very bottom.
-// Safe to call multiple times — the second call is a no-op if
-// already at the bottom, so the double-trigger above causes no jitter.
-function scrollToBottom() {
-  const list = document.getElementById('messagesList');
-  list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
 }
 
 function handleKey(e) {
@@ -910,13 +894,11 @@ function renderTypingBar() {
   bar.innerHTML = `<span style="color:var(--accent2)">${esc(who)}</span>&nbsp;${verb}<span class="typing-dots"><span></span><span></span><span></span></span>`;
 }
 
-// ── REPLY ──────────────────────────────────────
+// ── REPLY ─────────────────────────────────────
 function startReply(msgId) {
-  // Toggle off if already replying to the same message
   if (replyingTo && replyingTo.msgId === msgId) { cancelReply(); return; }
   const m = msgStore[msgId];
   if (!m) return;
-  // Clear previous active reply button
   document.querySelectorAll('.reply-btn.active').forEach(b => b.classList.remove('active'));
   replyingTo = { msgId, uid: m.uid, name: m.name, text: m.text, colorIdx: m.colorIdx };
   const theme = getPlayerTheme(m.uid, m.colorIdx);
@@ -924,7 +906,6 @@ function startReply(msgId) {
   document.getElementById('replyPreviewAuthor').style.color = theme.fg;
   document.getElementById('replyPreviewText').textContent = m.text || '[media]';
   document.getElementById('replyPreviewBar').classList.add('show');
-  // Highlight the reply button for this message
   const grp = document.querySelector(`[data-msg-id="${msgId}"]`);
   if (grp) grp.querySelector('.reply-btn')?.classList.add('active');
   document.getElementById('msgInput').focus();
@@ -941,20 +922,17 @@ function cancelReply() {
   document.getElementById('replyPreviewText').textContent = '';
 }
 
-// ── EDIT ───────────────────────────────────────
+// ── EDIT ──────────────────────────────────────
 function startEdit(msgId) {
   const m = msgStore[msgId];
   if (!m || m.uid !== myUID) return;
-  // Toggle off if already editing the same message
   if (editingMsgId === msgId) { cancelEdit(); return; }
-  // Clear previous active edit button
   document.querySelectorAll('.edit-btn.active').forEach(b => b.classList.remove('active'));
   editingMsgId = msgId;
   const inp = document.getElementById('msgInput');
   inp.value = m.text;
   inp.classList.add('editing');
   document.getElementById('editIndicator').classList.add('show');
-  // Highlight the edit button for this message
   const grp = document.querySelector(`[data-msg-id="${msgId}"]`);
   if (grp) grp.querySelector('.edit-btn')?.classList.add('active');
   inp.focus();
@@ -976,10 +954,8 @@ function applyEdit({ msgId, text }) {
   const m = msgStore[msgId];
   if (!m) return;
   m.text = text;
-  // Update the bubble text in DOM
   const bubble = m.el.querySelector('.bubble');
   if (bubble && !bubble.querySelector('img') && !bubble.querySelector('video')) {
-    // Remove existing edited tag if any
     const existingTag = bubble.querySelector('.edited-tag');
     if (existingTag) existingTag.remove();
     bubble.textContent = text;
@@ -1021,9 +997,15 @@ function cancelMedia() {
 function sendMedia() {
   if (!pendingMedia || !ws || ws.readyState !== 1) return;
   const payload = { type:'media', ...pendingMedia };
+  // Capture BEFORE cancelReply() clears the state
+  const wasReplying = !!replyingTo;
   if (replyingTo) { payload.replyTo = replyingTo; cancelReply(); }
   ws.send(JSON.stringify(payload));
   cancelMedia();
+  // Same mobile-safe scroll fix for media replies
+  if (wasReplying) {
+    scrollToBottom();
+  }
 }
 
 // ── LEAVE ─────────────────────────────────────
@@ -1110,14 +1092,12 @@ function appendMsg(m) {
   const b = document.createElement('div');
   b.className = 'bubble';
 
-  // Reply quote
   if (m.replyTo) {
-    const theme = getPlayerTheme(m.replyTo.uid, m.replyTo.colorIdx);
-    const fg = theme.fg;
+    const rTheme = getPlayerTheme(m.replyTo.uid, m.replyTo.colorIdx);
+    const fg = rTheme.fg;
     const q = document.createElement('div');
     q.className = 'reply-quote';
     q.innerHTML = `<span class="reply-quote-author" style="color:${fg}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;margin-right:2px;margin-bottom:-1px"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg> ${esc(m.replyTo.name)}</span><span class="reply-quote-text">${esc(m.replyTo.text || '[media]')}</span>`;
-    // clicking the quote scrolls to original
     q.style.cursor = 'pointer';
     q.onclick = () => scrollToMsg(m.replyTo.msgId);
     b.appendChild(q);
@@ -1149,7 +1129,6 @@ function appendMsg(m) {
 
   grp.appendChild(b);
 
-  // Action buttons (reply + edit if own)
   const actions = document.createElement('div');
   actions.className = 'msg-actions';
   actions.innerHTML = `<button class="msg-action-btn reply-btn" onclick="startReply('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>REPLY</button>${isSelf && m.type !== 'media' ? `<button class="msg-action-btn edit-btn" onclick="startEdit('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>EDIT</button>` : ''}`;
@@ -1158,7 +1137,6 @@ function appendMsg(m) {
   list.appendChild(grp);
   lastMsgUID = m.uid;
 
-  // Store for reply/edit lookup
   msgStore[msgId] = { uid: m.uid, name: m.name, text: m.text || '', colorIdx: m.colorIdx || 0, el: grp };
 
   if (atBottom) list.scrollTop = list.scrollHeight;
@@ -1166,7 +1144,11 @@ function appendMsg(m) {
 
 function scrollToMsg(msgId) {
   const el = document.querySelector(`[data-msg-id="${msgId}"]`);
-  if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.style.outline = '2px solid var(--accent)'; setTimeout(()=>el.style.outline='',1200); }
+  if (el) {
+    el.scrollIntoView({ behavior:'smooth', block:'center' });
+    el.style.outline = '2px solid var(--accent)';
+    setTimeout(() => el.style.outline = '', 1200);
+  }
 }
 
 // ── SIDEBAR (mobile) ──────────────────────────
@@ -1254,7 +1236,6 @@ function copyShareLink() {
   if (!link) return;
   navigator.clipboard.writeText(link).then(() => showToast('>> SHARE LINK COPIED!'));
 }
-
 </script>
 </body>
 </html>
