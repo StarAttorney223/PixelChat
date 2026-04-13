@@ -33,7 +33,6 @@
     overflow:hidden;
   }
 
-  /* scanlines: OFF */
   body::before {
     content:''; position:fixed; inset:0;
     background:
@@ -59,7 +58,6 @@
     border:4px solid var(--accent);
     box-shadow:10px 10px 0 rgba(0,229,255,.22), inset 2px 2px 0 rgba(255,255,255,.05), inset -2px -2px 0 rgba(0,0,0,.3);
   }
-  /* corner notches */
   .lobby-card::before {
     content:''; position:absolute; top:-4px; left:-4px; right:-4px; bottom:-4px;
     background:
@@ -111,15 +109,15 @@
     letter-spacing:1px; cursor:pointer;
     text-transform:uppercase; transition:all .1s ease;
   }
-  .btn-primary { 
-    background:var(--accent); color:#000; border:none; margin-bottom:16px; 
-    box-shadow: 0 4px 0 #0099bb; 
+  .btn-primary {
+    background:var(--accent); color:#000; border:none; margin-bottom:16px;
+    box-shadow: 0 4px 0 #0099bb;
   }
   .btn-primary:hover { transform:scale(1.02); }
   .btn-primary:active { transform:translateY(4px) scale(1.02); box-shadow: 0 0 0 #0099bb; }
-  
-  .btn-secondary { 
-    background:transparent; color:var(--accent2); border:3px solid var(--accent2); 
+
+  .btn-secondary {
+    background:transparent; color:var(--accent2); border:3px solid var(--accent2);
     box-shadow: 0 4px 0 #770055;
   }
   .btn-secondary:hover { transform:scale(1.02); }
@@ -224,7 +222,8 @@
   .me-tag { font-family:'Press Start 2P',monospace; font-size:6px; background:var(--accent); color:#000; padding:3px 5px; margin-left:auto; flex-shrink:0; }
 
   /* MESSAGES */
-  .messages-area { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); min-width:0; }
+  /* position:relative so the floating "New Messages" button is anchored here */
+  .messages-area { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); min-width:0; position:relative; }
   .messages-list { flex:1; overflow-y:auto; padding:20px 22px; display:flex; flex-direction:column; gap:2px; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
 
   .sys-msg { text-align:center; font-size:16px; color:var(--muted); padding:10px 0; letter-spacing:2px; display:flex; align-items:center; gap:10px; }
@@ -291,7 +290,7 @@
   .send-btn:active { transform:scale(0.95); }
   .send-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
 
-  /* media preview in input */
+  /* media preview */
   .media-preview-bar {
     display:none; padding:8px 18px; background:var(--panel);
     border-top:2px solid var(--border);
@@ -451,6 +450,38 @@
     font-size:clamp(16px,2.5vw,20px); color:var(--yellow); letter-spacing:2px;
   }
 
+  /* ── NEW MESSAGES BUTTON ──
+     Floats over the message list (absolute inside .messages-area).
+     Hidden by default; .visible class makes it appear with a pixel-pop animation.
+  */
+  .new-msg-btn {
+    display: none;
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    z-index: 50;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 0;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 10px 18px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    box-shadow: 4px 4px 0 rgba(0,229,255,.35);
+    white-space: nowrap;
+  }
+  .new-msg-btn.visible {
+    display: block;
+    animation: btn-pop .15s steps(2) forwards;
+  }
+  @keyframes btn-pop {
+    from { transform: translateX(-50%) translateY(8px); opacity: 0; }
+    to   { transform: translateX(-50%) translateY(0);   opacity: 1; }
+  }
+
   /* ══════════════════════════════════════
      RESPONSIVE
   ══════════════════════════════════════ */
@@ -493,6 +524,8 @@
     .msg-input { font-size:22px; padding:8px 12px; }
     .send-btn { font-size:9px; padding:10px 12px; }
     .media-btn { width:42px; height:42px; font-size:20px; }
+
+    .new-msg-btn { font-size: 8px; padding: 9px 14px; bottom: 12px; }
   }
 </style>
 </head>
@@ -617,6 +650,11 @@
     <div class="messages-area">
       <div class="messages-list" id="messagesList"></div>
 
+      <!-- Floating "New Messages" button — shown when user is scrolled up and a new message arrives -->
+      <button class="new-msg-btn" id="newMsgBtn" onclick="onNewMsgBtnClick()">
+        ↓ NEW MESSAGES
+      </button>
+
       <div class="typing-bar" id="typingBar"></div>
 
       <div class="media-preview-bar" id="mediaPreviewBar">
@@ -694,6 +732,31 @@ let editingMsgId = null;
 
 const msgStore = {};
 
+// ── SCROLL STATE ──────────────────────────────
+// true  → user has scrolled up; don't auto-scroll on new messages, show button instead
+// false → user is at (or near) bottom; auto-scroll every new message
+let userScrolledUp = false;
+
+function isNearBottom() {
+  const list = document.getElementById('messagesList');
+  return list.scrollHeight - list.scrollTop - list.clientHeight < 100;
+}
+
+function showNewMsgBtn() {
+  document.getElementById('newMsgBtn').classList.add('visible');
+}
+
+function hideNewMsgBtn() {
+  document.getElementById('newMsgBtn').classList.remove('visible');
+}
+
+// Called when the user clicks "↓ NEW MESSAGES"
+function onNewMsgBtnClick() {
+  hideNewMsgBtn();
+  userScrolledUp = false;
+  scrollToBottom();
+}
+
 // ── LOBBY ─────────────────────────────────────
 function createRoom() {
   const name = document.getElementById('nameInput').value.trim();
@@ -755,9 +818,24 @@ function onMsg(msg) {
     document.querySelectorAll('.roomCodeDisplayVal').forEach(el => el.textContent = msg.room);
     document.getElementById('messagesList').innerHTML = '';
     lastMsgUID = null;
+    userScrolledUp = false;
+
     (msg.history || []).forEach(appendMsg);
     setInputEnabled(true);
     document.getElementById('msgInput').focus();
+
+    // Attach scroll listener once per session.
+    // Keeps userScrolledUp in sync so smart-scroll and the new-messages
+    // button behave correctly for all incoming messages.
+    const list = document.getElementById('messagesList');
+    list.addEventListener('scroll', () => {
+      if (isNearBottom()) {
+        userScrolledUp = false;
+        hideNewMsgBtn();
+      } else {
+        userScrolledUp = true;
+      }
+    }, { passive: true });
 
   } else if (msg.type === 'user_list') {
     renderUsers(msg.users);
@@ -845,13 +923,13 @@ function sendMessage() {
     payload.replyTo = replyingTo;
     cancelReply();
   }
-  ws.send(JSON.stringify(payload));
+ws.send(JSON.stringify(payload));
 
-  // Force-scroll to bottom after a reply (user may be scrolled far up).
-  // scrollToBottom() runs two passes — see its comment above for details.
-  if (wasReplying) {
-    scrollToBottom();
-  }
+  // Own message: ALWAYS scroll to bottom, regardless of scroll position.
+  // This covers both normal sends and reply sends.
+  userScrolledUp = false;
+  hideNewMsgBtn();
+  scrollToBottom();
 }
 
 function handleKey(e) {
@@ -1002,11 +1080,13 @@ function sendMedia() {
   if (replyingTo) { payload.replyTo = replyingTo; cancelReply(); }
   ws.send(JSON.stringify(payload));
   cancelMedia();
-  // Same mobile-safe scroll fix for media replies
-  if (wasReplying) {
-    scrollToBottom();
-  }
+  
+  // Own media send: always scroll to bottom, same as sendMessage.
+  userScrolledUp = false;
+  hideNewMsgBtn();
+  scrollToBottom();
 }
+
 
 // ── LEAVE ─────────────────────────────────────
 function leaveRoom() {
@@ -1023,6 +1103,8 @@ function leaveRoom() {
   document.getElementById('onlineCount').textContent = '0';
   document.getElementById('typingBar').innerHTML    = '';
   lastMsgUID = null;
+  userScrolledUp = false;
+  hideNewMsgBtn();
   Object.keys(typingUsers).forEach(k => delete typingUsers[k]);
   Object.keys(msgStore).forEach(k => delete msgStore[k]);
   closeSidebar();
@@ -1055,20 +1137,20 @@ function renderUsers(users) {
 // ── RENDER MESSAGE ────────────────────────────
 function appendMsg(m) {
   const list = document.getElementById('messagesList');
-  const atBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 100;
 
   if (m.type === 'system') {
     const el = document.createElement('div');
     el.className = 'sys-msg'; el.textContent = m.text;
     list.appendChild(el); lastMsgUID = null;
-    if (atBottom) list.scrollTop = list.scrollHeight;
+    // System messages follow the same smart-scroll rule
+    if (!userScrolledUp) scrollToBottom();
     return;
   }
 
   const isSelf = m.uid === myUID;
   const msgId = m.msgId || (m.uid + '_' + m.ts);
   const grp = document.createElement('div');
-  
+
   const theme = getPlayerTheme(m.uid, m.colorIdx);
   const fgColor = theme.fg;
   const bgColor = theme.bg;
@@ -1137,9 +1219,18 @@ function appendMsg(m) {
   list.appendChild(grp);
   lastMsgUID = m.uid;
 
-  msgStore[msgId] = { uid: m.uid, name: m.name, text: m.text || '', colorIdx: m.colorIdx || 0, el: grp };
+msgStore[msgId] = { uid: m.uid, name: m.name, text: m.text || '', colorIdx: m.colorIdx || 0, el: grp };
 
-  if (atBottom) list.scrollTop = list.scrollHeight;
+  // Own messages: sendMessage() already called scrollToBottom() + reset userScrolledUp.
+  // Running it again here would race against that scroll — skip it.
+  // Others' messages: use smart scroll (auto if near bottom, button if scrolled up).
+  if (m.uid === myUID) {
+    // scroll already handled by sendMessage / sendMedia
+  } else if (!userScrolledUp) {
+    scrollToBottom();
+  } else {
+    showNewMsgBtn();
+  }
 }
 
 function scrollToMsg(msgId) {
@@ -1207,7 +1298,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const inp = document.getElementById('roomInput');
     inp.style.borderColor = 'var(--yellow)';
     inp.style.boxShadow = 'inset 3px 3px 0 rgba(0,0,0,.4), 0 0 0 2px rgba(255,230,0,.3)';
-    
+
     if (savedName) {
       document.getElementById('nameInput').value = savedName;
       document.getElementById('lobby').style.display = 'none';
