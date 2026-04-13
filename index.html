@@ -221,10 +221,20 @@
   .user-uid  { display:none; }
   .me-tag { font-family:'Press Start 2P',monospace; font-size:6px; background:var(--accent); color:#000; padding:3px 5px; margin-left:auto; flex-shrink:0; }
 
-  /* MESSAGES */
-  /* position:relative so the floating "New Messages" button is anchored here */
-  .messages-area { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); min-width:0; position:relative; }
-  .messages-list { flex:1; overflow-y:auto; padding:20px 22px; display:flex; flex-direction:column; gap:2px; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+  /* MESSAGES
+     messages-area is a flex column: [messages-list flex:1] [typing-bar] [bars] [input-area]
+     The new-msg-btn is absolute inside messages-list (the scrollable region),
+     so it always floats above the last message, never over the input row.
+  */
+  .messages-area { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); min-width:0; }
+
+  /* The scrollable list is position:relative so the button can anchor to it */
+  .messages-list {
+    flex:1; overflow-y:auto; padding:20px 22px;
+    display:flex; flex-direction:column; gap:2px;
+    scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+    position:relative; /* anchor for .new-msg-btn */
+  }
 
   .sys-msg { text-align:center; font-size:16px; color:var(--muted); padding:10px 0; letter-spacing:2px; display:flex; align-items:center; gap:10px; }
   .sys-msg::before,.sys-msg::after { content:''; flex:1; height:2px; background:repeating-linear-gradient(90deg,var(--border) 0,var(--border) 4px,transparent 4px,transparent 8px); }
@@ -251,6 +261,42 @@
   .msg-group.self { align-items:flex-end; display:flex; flex-direction:column; }
   .msg-group.self .msg-meta { flex-direction:row-reverse; }
 
+  /* ── NEW MESSAGES BUTTON ──
+     Anchored to .messages-list (position:relative).
+     sticky: always visible at the bottom of the visible scroll area.
+     pointer-events only on the button itself, doesn't block messages.
+     Sits INSIDE the scroll container so it is never on top of the input row.
+  */
+  .new-msg-btn {
+    display: none;
+    position: sticky;  /* sticks to bottom of the visible messages-list viewport */
+    bottom: 12px;
+    /* center horizontally without absolute */
+    align-self: center;
+    z-index: 50;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 0;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 10px 18px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    box-shadow: 4px 4px 0 rgba(0,229,255,.35);
+    white-space: nowrap;
+    /* keep it out of the normal flex flow so it doesn't push messages up */
+    margin-top: auto;
+  }
+  .new-msg-btn.visible {
+    display: block;
+    animation: btn-pop .15s steps(2) forwards;
+  }
+  @keyframes btn-pop {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* TYPING INDICATOR */
   .typing-bar {
     padding:6px 22px;
@@ -260,6 +306,7 @@
     letter-spacing:1px;
     display:flex; align-items:center; gap:8px;
     border-top:2px solid var(--border);
+    flex-shrink:0;
   }
   .typing-dots span {
     display:inline-block; width:6px; height:6px; border-radius:50%;
@@ -450,38 +497,6 @@
     font-size:clamp(16px,2.5vw,20px); color:var(--yellow); letter-spacing:2px;
   }
 
-  /* ── NEW MESSAGES BUTTON ──
-     Floats over the message list (absolute inside .messages-area).
-     Hidden by default; .visible class makes it appear with a pixel-pop animation.
-  */
-  .new-msg-btn {
-    display: none;
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-    z-index: 50;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 0;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    padding: 10px 18px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    box-shadow: 4px 4px 0 rgba(0,229,255,.35);
-    white-space: nowrap;
-  }
-  .new-msg-btn.visible {
-    display: block;
-    animation: btn-pop .15s steps(2) forwards;
-  }
-  @keyframes btn-pop {
-    from { transform: translateX(-50%) translateY(8px); opacity: 0; }
-    to   { transform: translateX(-50%) translateY(0);   opacity: 1; }
-  }
-
   /* ══════════════════════════════════════
      RESPONSIVE
   ══════════════════════════════════════ */
@@ -525,7 +540,7 @@
     .send-btn { font-size:9px; padding:10px 12px; }
     .media-btn { width:42px; height:42px; font-size:20px; }
 
-    .new-msg-btn { font-size: 8px; padding: 9px 14px; bottom: 12px; }
+    .new-msg-btn { font-size: 8px; padding: 9px 14px; bottom: 10px; }
   }
 </style>
 </head>
@@ -648,12 +663,12 @@
     </div>
 
     <div class="messages-area">
+      <!--
+        .new-msg-btn lives INSIDE .messages-list (added by JS into the flex scroll container).
+        It uses position:sticky so it always hugs the bottom of the VISIBLE scroll viewport,
+        never overlapping the typing-bar / input-area below.
+      -->
       <div class="messages-list" id="messagesList"></div>
-
-      <!-- Floating "New Messages" button — shown when user is scrolled up and a new message arrives -->
-      <button class="new-msg-btn" id="newMsgBtn" onclick="onNewMsgBtnClick()">
-        ↓ NEW MESSAGES
-      </button>
 
       <div class="typing-bar" id="typingBar"></div>
 
@@ -733,8 +748,6 @@ let editingMsgId = null;
 const msgStore = {};
 
 // ── SCROLL STATE ──────────────────────────────
-// true  → user has scrolled up; don't auto-scroll on new messages, show button instead
-// false → user is at (or near) bottom; auto-scroll every new message
 let userScrolledUp = false;
 
 function isNearBottom() {
@@ -742,15 +755,20 @@ function isNearBottom() {
   return list.scrollHeight - list.scrollTop - list.clientHeight < 100;
 }
 
-function showNewMsgBtn() {
-  document.getElementById('newMsgBtn').classList.add('visible');
+// The button is injected as a sticky child of #messagesList so it
+// always appears above the last message, never over the input row.
+// We create it once and reuse it throughout the session.
+let _newMsgBtnEl = null;
+function _getNewMsgBtn() {
+  if (!_newMsgBtnEl) {
+    _newMsgBtnEl = document.getElementById('newMsgBtn');
+  }
+  return _newMsgBtnEl;
 }
 
-function hideNewMsgBtn() {
-  document.getElementById('newMsgBtn').classList.remove('visible');
-}
+function showNewMsgBtn() { _getNewMsgBtn().classList.add('visible'); }
+function hideNewMsgBtn() { _getNewMsgBtn().classList.remove('visible'); }
 
-// Called when the user clicks "↓ NEW MESSAGES"
 function onNewMsgBtnClick() {
   hideNewMsgBtn();
   userScrolledUp = false;
@@ -820,14 +838,24 @@ function onMsg(msg) {
     lastMsgUID = null;
     userScrolledUp = false;
 
+    // Inject the sticky "New Messages" button as the last child of the
+    // scroll container. position:sticky + bottom:12px means it always
+    // hugs the bottom of the VISIBLE list area, never the input row.
+    const list = document.getElementById('messagesList');
+    if (!document.getElementById('newMsgBtn')) {
+      const btn = document.createElement('button');
+      btn.className = 'new-msg-btn';
+      btn.id = 'newMsgBtn';
+      btn.textContent = '↓ NEW MESSAGES';
+      btn.onclick = onNewMsgBtnClick;
+      list.appendChild(btn);
+    }
+    _newMsgBtnEl = document.getElementById('newMsgBtn');
+
     (msg.history || []).forEach(appendMsg);
     setInputEnabled(true);
     document.getElementById('msgInput').focus();
 
-    // Attach scroll listener once per session.
-    // Keeps userScrolledUp in sync so smart-scroll and the new-messages
-    // button behave correctly for all incoming messages.
-    const list = document.getElementById('messagesList');
     list.addEventListener('scroll', () => {
       if (isNearBottom()) {
         userScrolledUp = false;
@@ -855,42 +883,33 @@ function onMsg(msg) {
 // Two-pass strategy:
 //   Pass 1 — double rAF: fires after the browser's next paint, ensuring the
 //             new message node is in the DOM and its height is known.
-//   Pass 2 — 150 ms setTimeout: catches the secondary reflow that happens
-//             when reply-preview-bar / edit-indicator / media-preview-bar
-//             collapse *after* cancelReply() / cancelEdit() runs, which
-//             shifts the flex layout and changes scrollHeight.
+//   Pass 2 — 200 ms setTimeout: catches secondary reflow from bars collapsing.
 //
-// On mobile we bypass scrollTo({ behavior:'smooth' }) entirely and use a
-// direct scrollTop assignment. The native momentum scroller on iOS/Android
-// intercepts smooth scroll and consistently lands 40-80 px short when the
-// container height just changed. Instant assignment always hits the true
-// bottom. On desktop smooth animation is fine and feels better.
-//
-// The +4 px buffer handles sub-pixel rounding in some Android WebViews
-// where scrollHeight can be reported 1-3 px less than the true maximum.
-// Calling this function twice is safe — if already at the bottom the second
-// call is a no-op and causes no visible jitter.
+// On mobile: instant scrollTop (avoids iOS/Android smooth-scroll cutoff bug).
+// On desktop: smooth scrollTo.
+// +4 px buffer covers sub-pixel rounding in Android WebViews.
 function scrollToBottom() {
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const list     = document.getElementById('messagesList');
 
   function doScroll() {
+    // scrollHeight already accounts for the sticky button height since it
+    // is a child of the flex container. +4 for sub-pixel safety.
     const target = list.scrollHeight + 4;
     if (isMobile) {
-      // Instant on mobile — avoids the "stops short" bug.
       list.scrollTop = target;
     } else {
       list.scrollTo({ top: target, behavior: 'smooth' });
     }
   }
 
-  // Pass 1: after next two paint frames (node in DOM + first layout pass)
   requestAnimationFrame(() => {
     requestAnimationFrame(doScroll);
   });
 
-  // Pass 2: after collapsing bars finish reflowing
-  setTimeout(doScroll, 150);
+  // Second pass: catches reflow after reply/edit bars collapse (150→200ms
+  // gives a little more headroom on slow Android devices)
+  setTimeout(doScroll, 200);
 }
 
 // ── SEND TEXT ─────────────────────────────────
@@ -915,18 +934,14 @@ function sendMessage() {
   inp.value = '';
   stopTyping();
 
-  // Capture BEFORE cancelReply() clears the state
-  const wasReplying = !!replyingTo;
-
   const payload = { type:'chat', text };
   if (replyingTo) {
     payload.replyTo = replyingTo;
     cancelReply();
   }
-ws.send(JSON.stringify(payload));
+  ws.send(JSON.stringify(payload));
 
-  // Own message: ALWAYS scroll to bottom, regardless of scroll position.
-  // This covers both normal sends and reply sends.
+  // Own message: ALWAYS scroll to bottom regardless of scroll position.
   userScrolledUp = false;
   hideNewMsgBtn();
   scrollToBottom();
@@ -1075,18 +1090,14 @@ function cancelMedia() {
 function sendMedia() {
   if (!pendingMedia || !ws || ws.readyState !== 1) return;
   const payload = { type:'media', ...pendingMedia };
-  // Capture BEFORE cancelReply() clears the state
-  const wasReplying = !!replyingTo;
   if (replyingTo) { payload.replyTo = replyingTo; cancelReply(); }
   ws.send(JSON.stringify(payload));
   cancelMedia();
-  
-  // Own media send: always scroll to bottom, same as sendMessage.
+  // Own media send: always scroll to bottom
   userScrolledUp = false;
   hideNewMsgBtn();
   scrollToBottom();
 }
-
 
 // ── LEAVE ─────────────────────────────────────
 function leaveRoom() {
@@ -1104,7 +1115,7 @@ function leaveRoom() {
   document.getElementById('typingBar').innerHTML    = '';
   lastMsgUID = null;
   userScrolledUp = false;
-  hideNewMsgBtn();
+  _newMsgBtnEl = null;
   Object.keys(typingUsers).forEach(k => delete typingUsers[k]);
   Object.keys(msgStore).forEach(k => delete msgStore[k]);
   closeSidebar();
@@ -1138,11 +1149,15 @@ function renderUsers(users) {
 function appendMsg(m) {
   const list = document.getElementById('messagesList');
 
+  // Ensure the sticky button stays as the last child after every append
+  const btn = document.getElementById('newMsgBtn');
+
   if (m.type === 'system') {
     const el = document.createElement('div');
     el.className = 'sys-msg'; el.textContent = m.text;
-    list.appendChild(el); lastMsgUID = null;
-    // System messages follow the same smart-scroll rule
+    // Insert before the sticky button so button stays last
+    if (btn) list.insertBefore(el, btn); else list.appendChild(el);
+    lastMsgUID = null;
     if (!userScrolledUp) scrollToBottom();
     return;
   }
@@ -1216,16 +1231,16 @@ function appendMsg(m) {
   actions.innerHTML = `<button class="msg-action-btn reply-btn" onclick="startReply('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>REPLY</button>${isSelf && m.type !== 'media' ? `<button class="msg-action-btn edit-btn" onclick="startEdit('${msgId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-bottom:-2px;margin-right:4px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>EDIT</button>` : ''}`;
   grp.appendChild(actions);
 
-  list.appendChild(grp);
+  // Insert before the sticky button so it stays the last child
+  if (btn) list.insertBefore(grp, btn); else list.appendChild(grp);
   lastMsgUID = m.uid;
 
-msgStore[msgId] = { uid: m.uid, name: m.name, text: m.text || '', colorIdx: m.colorIdx || 0, el: grp };
+  msgStore[msgId] = { uid: m.uid, name: m.name, text: m.text || '', colorIdx: m.colorIdx || 0, el: grp };
 
-  // Own messages: sendMessage() already called scrollToBottom() + reset userScrolledUp.
-  // Running it again here would race against that scroll — skip it.
-  // Others' messages: use smart scroll (auto if near bottom, button if scrolled up).
+  // Own messages: scroll already handled by sendMessage/sendMedia — skip to avoid race.
+  // Others' messages: smart scroll.
   if (m.uid === myUID) {
-    // scroll already handled by sendMessage / sendMedia
+    // handled by sendMessage / sendMedia
   } else if (!userScrolledUp) {
     scrollToBottom();
   } else {
