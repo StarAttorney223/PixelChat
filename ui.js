@@ -147,7 +147,7 @@ function appendMsg(m) {
 
   if (m.type === 'system') {
     const el = document.createElement('div');
-    el.className = 'sys-msg'; el.textContent = m.text;
+    el.className = 'sys-msg'; el.innerHTML = formatTextWithLinks(m.text);
     if (btn) list.insertBefore(el, btn); else list.appendChild(el);
     lastMsgUID = null;
     if (!userScrolledUp) scrollToBottom();
@@ -212,7 +212,8 @@ function appendMsg(m) {
     }
   } else {
     const textNode = document.createElement('span');
-    textNode.textContent = m.text;
+    textNode.className = 'msg-text-content';
+    textNode.innerHTML = formatTextWithLinks(m.text);
     b.appendChild(textNode);
   }
 
@@ -267,6 +268,35 @@ function fmtTime(ts) {
 
 function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatTextWithLinks(text) {
+  if (!text) return '';
+  const urlRegex = /(https?:\/\/[^\s<>]+)/g;
+  let parts = [];
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = urlRegex.exec(text)) !== null) {
+    let before = text.slice(lastIndex, match.index);
+    let url = match[0];
+    lastIndex = urlRegex.lastIndex;
+    
+    let suffix = '';
+    while (url.length > 0 && /[.,;!?]$/.test(url.slice(-1))) {
+      suffix = url.slice(-1) + suffix;
+      url = url.slice(0, -1);
+    }
+    lastIndex -= suffix.length;
+    
+    parts.push(esc(before));
+    
+    const href = url.replace(/"/g, '%22').replace(/'/g, '%27');
+    parts.push(`<a href="${esc(href)}" target="_blank" style="color: inherit; text-decoration: underline;">${esc(url)}</a>`);
+  }
+  
+  parts.push(esc(text.slice(lastIndex)));
+  return parts.join('');
 }
 
 function renderTypingBar() {
@@ -342,7 +372,18 @@ function applyEdit({ msgId, text }) {
   if (bubble && !bubble.querySelector('img') && !bubble.querySelector('video')) {
     const existingTag = bubble.querySelector('.edited-tag');
     if (existingTag) existingTag.remove();
-    bubble.textContent = text;
+    
+    let textNode = bubble.querySelector('.msg-text-content');
+    if (!textNode) {
+      const replyQuote = bubble.querySelector('.reply-quote');
+      bubble.innerHTML = '';
+      if (replyQuote) bubble.appendChild(replyQuote);
+      textNode = document.createElement('span');
+      textNode.className = 'msg-text-content';
+      bubble.appendChild(textNode);
+    }
+    textNode.innerHTML = formatTextWithLinks(text);
+
     const tag = document.createElement('span');
     tag.className = 'edited-tag';
     tag.textContent = '(edited)';
